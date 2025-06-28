@@ -42,18 +42,21 @@ export type CodeEditorOptions = {
   scrollBeyondLastLine?: boolean;
   renderWhitespace?: 'none' | 'boundary' | 'selection' | 'trailing' | 'all';
   cursorStyle?:
-  | 'line'
-  | 'block'
-  | 'underline'
-  | 'line-thin'
-  | 'block-outline'
-  | 'underline-thin';
+    | 'line'
+    | 'block'
+    | 'underline'
+    | 'line-thin'
+    | 'block-outline'
+    | 'underline-thin';
 };
 
 /**
  * Icon component type for customizable icons
  */
-export type IconComponent = React.ComponentType<{ className?: string; size?: string | number }>;
+export type IconComponent = React.ComponentType<{
+  className?: string;
+  size?: string | number;
+}>;
 
 /**
  * Configuration for editor icons

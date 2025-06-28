@@ -92,7 +92,7 @@ export function filterReadonlyChanges(
           range.endColumn < (readonlyRange.startColumn || 1)) ||
         (range.startLineNumber === readonlyRange.endLine &&
           range.startColumn >
-          (readonlyRange.endColumn || Number.MAX_SAFE_INTEGER))
+            (readonlyRange.endColumn || Number.MAX_SAFE_INTEGER))
       );
     });
   });

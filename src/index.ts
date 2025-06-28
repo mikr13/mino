@@ -1,4 +1,3 @@
-
 // Main component exports
 export { CodeEditor, EnhancedCodeEditor } from '@/components/code-editor';
 // Configuration exports
@@ -7,7 +6,7 @@ export {
   getLanguageConfig,
   getSupportedLanguages,
   isLanguageSupported,
-  LANGUAGE_CONFIGS
+  LANGUAGE_CONFIGS,
 } from './config/languages';
 export {
   createMonacoTheme,
@@ -15,7 +14,7 @@ export {
   getSystemTheme,
   getThemeConfig,
   LIGHT_THEME,
-  THEMES
+  THEMES,
 } from './config/themes';
 // Type exports
 export type {
@@ -25,7 +24,7 @@ export type {
   LanguageConfig,
   ReadonlyRange,
   SupportedLanguage,
-  ThemeConfig
+  ThemeConfig,
 } from './types';
 
 // Utility exports
@@ -33,6 +32,5 @@ export {
   convertReadonlyRangesToMonaco,
   filterReadonlyChanges,
   isPositionInReadonlyRange,
-  setupReadonlyRanges
+  setupReadonlyRanges,
 } from './utils/readonly';
-
