@@ -5,18 +5,6 @@ A reusable React component library for LeetCode-style code editor using Monaco E
 [![npm version](https://badge.fury.io/js/mino.svg)](https://badge.fury.io/js/mino)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
-
-- 🚀 **Monaco Editor Integration**: Powered by the same editor engine that powers VS Code
-- 🎨 **Customizable Themes**: Built-in light/dark themes with CSS variable overrides
-- 🔒 **Protected Code Blocks**: Readonly ranges to prevent editing of template code
-- 🌍 **Multi-Language Support**: JavaScript, Python, TypeScript, Java, C++, and C
-- ⚡ **Performance Optimized**: Tree-shakable, lightweight, and fast
-- 🎛️ **Flexible Configuration**: Extensive options for customization
-- 📱 **Responsive Design**: Works on desktop and mobile devices
-- ♿ **Accessibility**: Built with accessibility in mind
-- 🎯 **TypeScript Ready**: Full TypeScript support with comprehensive types
-
 ## 📖 Documentation
 
 View the interactive documentation and examples at: [https://mikr13.github.io/mino/](https://mikr13.github.io/mino/)
@@ -58,7 +46,7 @@ function App() {
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) (recommended) or Node.js 18+
+- [Bun](https://bun.sh/) (recommended) or Node.js 22+
 
 ### Setup
 
