@@ -1,5 +1,5 @@
 {
-  "name": "mino-code-editor",
+  "name": "mino",
   "version": "1.0.0",
   "description": "A reusable React component library for LeetCode-style code editor using Monaco Editor",
   "type": "module",
@@ -16,7 +16,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE.md"
   ],
   "scripts": {
     "build": "vite build",
@@ -26,7 +27,11 @@
     "format": "biome format --write src",
     "check": "biome check src",
     "type-check": "tsc --noEmit",
-    "prepublishOnly": "bun run build"
+    "prepublishOnly": "bun run build && bun run type-check && bun run lint",
+    "publish:npm": "npm publish",
+    "publish:beta": "npm publish --tag beta",
+    "build-story": "ladle build",
+    "preview-story": "ladle preview"
   },
   "keywords": [
     "react",
@@ -34,19 +39,32 @@
     "code-editor",
     "typescript",
     "leetcode",
+    "education",
+    "interview",
+    "practice",
+    "coding",
+    "competitive-programming",
+    "competitive-coding",
+    "competitive-programming",
     "component-library",
-    "tailwindcss"
+    "tailwindcss",
+    "storybook",
+    "ladle"
   ],
   "author": "Mihir Kumar <mihirpandey.13@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mikr13/mino-code-editor.git"
+    "url": "https://github.com/mikr13/mino.git"
   },
   "bugs": {
-    "url": "https://github.com/mikr13/mino-code-editor/issues"
+    "url": "https://github.com/mikr13/mino/issues"
   },
-  "homepage": "https://github.com/mikr13/mino-code-editor#readme",
+  "homepage": "https://mikr13.github.io/mino/",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "peerDependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0"

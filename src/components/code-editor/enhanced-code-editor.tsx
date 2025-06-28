@@ -374,7 +374,7 @@ export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
     'mino-enhanced-editor',
     `mino-theme-${resolvedTheme}`,
     isFullScreen ? 'fullscreen' : '',
-    overrideStyles ? '' : 'mino-code-editor',
+    overrideStyles ? '' : 'mino',
     className,
   ]
     .filter(Boolean)

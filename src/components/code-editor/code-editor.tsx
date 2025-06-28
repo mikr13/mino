@@ -189,11 +189,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     resolvedTheme === 'dark' ? 'mino-dark' : 'mino-light';
 
   // Prepare container classes
-  const containerClasses = [
-    'mino-code-editor',
-    `mino-theme-${resolvedTheme}`,
-    className,
-  ]
+  const containerClasses = ['mino', `mino-theme-${resolvedTheme}`, className]
     .filter(Boolean)
     .join(' ');
 

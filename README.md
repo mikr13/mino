@@ -1,6 +1,9 @@
 # Mino Code Editor
 
-A reusable React component library that provides a LeetCode-style code editor experience using Monaco Editor. Built with TypeScript, styled with TailwindCSS, and designed for easy integration into coding interview platforms, educational tools, and practice environments.
+A reusable React component library for LeetCode-style code editor using Monaco Editor. Designed for easy integration into coding interview platforms, educational tools, and practice environments.
+
+[![npm version](https://badge.fury.io/js/mino.svg)](https://badge.fury.io/js/mino)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
 
@@ -14,292 +17,117 @@ A reusable React component library that provides a LeetCode-style code editor ex
 - ♿ **Accessibility**: Built with accessibility in mind
 - 🎯 **TypeScript Ready**: Full TypeScript support with comprehensive types
 
-## Installation
+## 📖 Documentation
+
+View the interactive documentation and examples at: [https://mikr13.github.io/mino/](https://mikr13.github.io/mino/)
+
+## 🚀 Installation
 
 ```bash
-npm install mino-code-editor
-# or
-yarn add mino-code-editor
-# or
-pnpm add mino-code-editor
+npm install mino
 ```
 
-### Peer Dependencies
+## 📦 Usage
 
-This package requires React 18+ as a peer dependency:
-
-```bash
-npm install react react-dom
-```
-
-## Basic Usage
-
-```tsx
-import { CodeEditor } from 'mino-code-editor';
-import { useState } from 'react';
+```jsx
+import { CodeEditor } from 'mino';
+import 'mino/style.css';
 
 function App() {
-  const [code, setCode] = useState('console.log("Hello, World!");');
-
-  return (
-    <div style={{ height: '400px' }}>
-      <CodeEditor
-        language="javascript"
-        value={code}
-        onChange={setCode}
-      />
-    </div>
-  );
-}
-```
-
-## API Reference
-
-### Props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `language` | `SupportedLanguage \| string` | `'javascript'` | Programming language for syntax highlighting |
-| `value` | `string` | - | Current code content |
-| `onChange` | `(code: string, event?: IModelContentChangedEvent) => void` | - | Callback fired when code changes |
-| `readonlyRanges` | `ReadonlyRange[]` | `[]` | Array of readonly ranges |
-| `theme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Theme preference |
-| `height` | `string \| number` | `'100%'` | Editor height |
-| `width` | `string \| number` | `'100%'` | Editor width |
-| `className` | `string` | `''` | Additional CSS class |
-| `style` | `CSSProperties` | - | Inline styles |
-| `options` | `CodeEditorOptions` | `{}` | Monaco editor options |
-| `overrideStyles` | `boolean` | `false` | Whether to override default styles |
-| `loading` | `ReactNode` | `'Loading editor...'` | Loading placeholder |
-| `onMount` | `(editor, monaco) => void` | - | Callback when editor mounts |
-| `beforeMount` | `(monaco) => void` | - | Callback before editor mounts |
-| `onValidate` | `(markers) => void` | - | Callback for validation |
-
-### Types
-
-```tsx
-type SupportedLanguage = 'python' | 'javascript' | 'typescript' | 'java' | 'cpp' | 'c';
-
-interface ReadonlyRange {
-  startLine: number;
-  endLine: number;
-  startColumn?: number;
-  endColumn?: number;
-}
-
-interface CodeEditorOptions {
-  minimap?: boolean;
-  lineNumbers?: boolean | 'on' | 'off' | 'relative' | 'interval';
-  wordWrap?: boolean | 'on' | 'off' | 'wordWrapColumn' | 'bounded';
-  readOnly?: boolean;
-  fontSize?: number;
-  tabSize?: number;
-  // ... and more Monaco editor options
-}
-```
-
-## Examples
-
-### LeetCode-Style Template
-
-```tsx
-import { CodeEditor, ReadonlyRange } from 'mino-code-editor';
-import { useState } from 'react';
-
-function LeetCodeProblem() {
-  const [code, setCode] = useState(`class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-        """
-        Given an array of integers nums and an integer target,
-        return indices of the two numbers such that they add up to target.
-        """
-        # Write your solution here
-        pass`);
-
-  const readonlyRanges: ReadonlyRange[] = [
-    { startLine: 1, endLine: 1 }, // Class declaration
-    { startLine: 2, endLine: 6 }, // Function signature and docstring
-  ];
-
   return (
     <CodeEditor
-      language="python"
-      value={code}
-      onChange={setCode}
-      readonlyRanges={readonlyRanges}
-      height="400px"
+      language="javascript"
+      value="console.log('Hello, World!');"
+      onChange={(value) => console.log(value)}
     />
   );
 }
 ```
 
-### Custom Theme
+## 🎯 Features
 
-```tsx
-import { CodeEditor } from 'mino-code-editor';
+- **Monaco Editor Integration**: Full-featured code editor with syntax highlighting
+- **Multiple Languages**: Support for JavaScript, TypeScript, Python, Java, C++, and more
+- **Customizable Themes**: Light and dark themes with custom styling options
+- **Auto-formatting**: Built-in code formatting with Prettier
+- **Type Safety**: Full TypeScript support
+- **Responsive Design**: Mobile-friendly responsive layout
+- **Accessibility**: ARIA compliant and keyboard navigation support
 
-function CustomThemeEditor() {
-  return (
-    <div style={{
-      '--mino-editor-bg': '#2d3748',
-      '--mino-editor-text': '#f7fafc',
-      '--mino-font-mono': '"JetBrains Mono", monospace',
-    }}>
-      <CodeEditor
-        language="javascript"
-        value="const hello = 'world';"
-        theme="dark"
-        options={{
-          fontSize: 16,
-          minimap: false,
-        }}
-      />
-    </div>
-  );
-}
-```
+## 🛠️ Development
 
-### Multi-Language Support
+### Prerequisites
 
-```tsx
-import { CodeEditor, getSupportedLanguages } from 'mino-code-editor';
-import { useState } from 'react';
+- [Bun](https://bun.sh/) (recommended) or Node.js 18+
 
-function MultiLanguageEditor() {
-  const [language, setLanguage] = useState('javascript');
-  const [code, setCode] = useState('console.log("Hello, World!");');
-
-  return (
-    <div>
-      <select 
-        value={language} 
-        onChange={(e) => setLanguage(e.target.value)}
-      >
-        {getSupportedLanguages().map(lang => (
-          <option key={lang.id} value={lang.id}>
-            {lang.label}
-          </option>
-        ))}
-      </select>
-      
-      <CodeEditor
-        language={language}
-        value={code}
-        onChange={setCode}
-      />
-    </div>
-  );
-}
-```
-
-## Styling and Customization
-
-### CSS Variables
-
-You can customize the editor appearance using CSS variables:
-
-```css
-.my-editor {
-  --mino-editor-bg: #ffffff;
-  --mino-editor-bg-dark: #1a202c;
-  --mino-editor-text: #1a202c;
-  --mino-editor-text-dark: #f7fafc;
-  --mino-editor-border: #e2e8f0;
-  --mino-editor-border-dark: #374151;
-  --mino-editor-accent: #3182ce;
-  --mino-readonly-bg: #f7fafc;
-  --mino-readonly-bg-dark: #2d3748;
-  --mino-font-mono: "Fira Code", monospace;
-  --mino-font-size: 14px;
-}
-```
-
-### TailwindCSS Integration
-
-The component uses TailwindCSS classes internally but can be styled with utility classes:
-
-```tsx
-<CodeEditor
-  className="border-2 border-blue-500 rounded-lg shadow-lg"
-  language="python"
-  value={code}
-  onChange={setCode}
-/>
-```
-
-## Advanced Usage
-
-### Readonly Ranges
-
-Protect specific code sections from editing:
-
-```tsx
-const readonlyRanges = [
-  { startLine: 1, endLine: 5 },        // Lines 1-5
-  { startLine: 10, endLine: 10, startColumn: 1, endColumn: 20 }, // Partial line
-];
-
-<CodeEditor
-  value={code}
-  readonlyRanges={readonlyRanges}
-  // ... other props
-/>
-```
-
-### Monaco Editor Access
-
-Access the underlying Monaco editor instance:
-
-```tsx
-<CodeEditor
-  onMount={(editor, monaco) => {
-    // Configure additional languages
-    monaco.languages.register({ id: 'myCustomLanguage' });
-    
-    // Add custom actions
-    editor.addAction({
-      id: 'my-action',
-      label: 'My Action',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK],
-      run: (editor) => {
-        console.log('Action executed!');
-      }
-    });
-  }}
-  // ... other props
-/>
-```
-
-## Development
-
-### Running Stories
+### Setup
 
 ```bash
-npm run dev
+# Clone the repository
+git clone https://github.com/mikr13/mino.git
+cd mino
+
+# Install dependencies
+bun install
+
+# Start development server
+bun run dev
 ```
 
-This starts the Ladle development server with component stories.
+### Available Scripts
 
-### Building
+- `bun run dev` - Start Ladle development server
+- `bun run build` - Build the library
+- `bun run build-story` - Build Ladle documentation
+- `bun run preview-story` - Preview built documentation
+- `bun run lint` - Run linter
+- `bun run format` - Format code
+- `bun run type-check` - Run TypeScript checks
 
-```bash
-npm run build
-```
+## 📋 API Reference
 
-### Type Checking
+### CodeEditor Props
 
-```bash
-npm run type-check
-```
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | `""` | The code content |
+| `language` | `string` | `"javascript"` | Programming language |
+| `theme` | `"light" \| "dark"` | `"light"` | Editor theme |
+| `onChange` | `(value: string) => void` | - | Callback when content changes |
+| `onMount` | `(editor: monaco.editor.IStandaloneCodeEditor) => void` | - | Callback when editor mounts |
+| `readOnly` | `boolean` | `false` | Whether editor is read-only |
+| `height` | `string \| number` | `400` | Editor height |
+| `width` | `string \| number` | `"100%"` | Editor width |
 
-## Browser Support
+## 📦 Publishing
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
+### NPM Publishing
 
-## Contributing
+The package is automatically published to NPM when you create a new release:
+
+1. **Manual Release**: Use GitHub Actions workflow
+   - Go to Actions → "Publish to NPM"
+   - Click "Run workflow"
+   - Select version type (patch/minor/major/prerelease)
+
+2. **Tag-based Release**: Push a git tag
+
+   ```bash
+   git tag v1.0.1
+   git push origin v1.0.1
+   ```
+
+### Prerequisites for Publishing
+
+1. **NPM Token**: Add `NPM_TOKEN` to GitHub repository secrets
+   - Generate token at [npmjs.com](https://www.npmjs.com/settings/tokens)
+   - Add as repository secret in GitHub
+
+2. **GitHub Pages**: Enable GitHub Pages in repository settings
+   - Go to Settings → Pages
+   - Source: GitHub Actions
+
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -307,12 +135,12 @@ npm run type-check
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
+## 📄 License
 
-MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/) - The code editor that powers VS Code
-- [TailwindCSS](https://tailwindcss.com/) - Utility-first CSS framework
-- [Ladle](https://ladle.dev/) - Component development and testing
+- [Ladle](https://ladle.dev/) - Fast and lightweight tool for developing and testing React components
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework

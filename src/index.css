@@ -132,7 +132,7 @@
    BASE CODE EDITOR STYLES
    ================================ */
 
-.mino-code-editor {
+.mino {
   position: relative;
   width: 100%;
   height: 100%;
@@ -173,18 +173,18 @@
 }
 
 /* Monaco editor customizations */
-.mino-code-editor .monaco-editor {
+.mino .monaco-editor {
   border-radius: 8px;
   border: 1px solid var(--mino-editor-border);
   background-color: var(--mino-editor-bg) !important;
 }
 
-.mino-code-editor .monaco-editor .view-lines {
+.mino .monaco-editor .view-lines {
   color: var(--mino-editor-text) !important;
 }
 
 /* Loading state */
-.mino-code-editor .monaco-editor-loading {
+.mino .monaco-editor-loading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -196,36 +196,36 @@
 }
 
 /* Focus styles */
-.mino-code-editor .monaco-editor.focused {
+.mino .monaco-editor.focused {
   outline: 2px solid #3182ce;
   outline-offset: 2px;
   border-color: #3182ce;
 }
 
 /* Scrollbar styling */
-.mino-code-editor .monaco-scrollable-element .scrollbar {
+.mino .monaco-scrollable-element .scrollbar {
   background-color: transparent !important;
 }
 
-.mino-code-editor .monaco-scrollable-element .slider {
+.mino .monaco-scrollable-element .slider {
   background-color: var(--mino-editor-border) !important;
   border-radius: 4px !important;
 }
 
-.mino-code-editor .monaco-scrollable-element .slider:hover {
+.mino .monaco-scrollable-element .slider:hover {
   background-color: #a0aec0 !important;
 }
 
 /* Error and warning decorations */
-.mino-code-editor .monaco-editor .squiggly-error {
+.mino .monaco-editor .squiggly-error {
   border-bottom: 2px wavy #e53e3e !important;
 }
 
-.mino-code-editor .monaco-editor .squiggly-warning {
+.mino .monaco-editor .squiggly-warning {
   border-bottom: 2px wavy #d69e2e !important;
 }
 
-.mino-code-editor .monaco-editor .squiggly-info {
+.mino .monaco-editor .squiggly-info {
   border-bottom: 2px wavy #3182ce !important;
 }
 
