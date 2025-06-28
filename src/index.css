@@ -1,0 +1,373 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Mino Code Editor - Combined Styles */
+
+/* ================================
+   CSS VARIABLES & THEME SYSTEM
+   ================================ */
+
+/* Enhanced Code Editor CSS Variables */
+:root {
+  /* Core Editor Variables */
+  --mino-font-mono: "Fira Code", "Monaco", "Cascadia Code", "Roboto Mono", monospace;
+  --mino-font-size: 14px;
+  
+  /* Editor Theme Variables */
+  --mino-editor-bg: #ffffff;
+  --mino-editor-text: #1a202c;
+  --mino-editor-border: #e2e8f0;
+  --mino-readonly-bg: #f7fafc;
+  
+  /* Toolbar */
+  --mino-toolbar-bg: #ffffff;
+  --mino-toolbar-border: #e5e7eb;
+  --mino-toolbar-text: #374151;
+  --mino-toolbar-hover-bg: #f9fafb;
+  --mino-toolbar-height: 48px;
+  --mino-toolbar-padding: 0.75rem;
+  --mino-toolbar-gap: 0.5rem;
+  
+  /* Buttons */
+  --mino-button-primary-bg: #2563eb;
+  --mino-button-primary-hover: #1d4ed8;
+  --mino-button-primary-text: #ffffff;
+  --mino-button-secondary-bg: #f3f4f6;
+  --mino-button-secondary-hover: #e5e7eb;
+  --mino-button-secondary-text: #374151;
+  --mino-button-radius: 0.375rem;
+  --mino-button-padding: 0.5rem 0.75rem;
+  --mino-button-font-size: 0.875rem;
+  
+  /* Dropdown */
+  --mino-dropdown-bg: #ffffff;
+  --mino-dropdown-border: #d1d5db;
+  --mino-dropdown-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --mino-dropdown-item-hover: #f3f4f6;
+  --mino-dropdown-radius: 0.5rem;
+  --mino-dropdown-max-height: 200px;
+  
+  /* Status bar */
+  --mino-status-bg: #f9fafb;
+  --mino-status-text: #6b7280;
+  --mino-status-border: #e5e7eb;
+  --mino-status-height: 32px;
+  --mino-status-padding: 0.5rem 0.75rem;
+  --mino-status-font-size: 0.75rem;
+  
+  /* Action buttons */
+  --mino-action-run-bg: #f3f4f6;
+  --mino-action-run-hover: #e5e7eb;
+  --mino-action-run-text: #374151;
+  --mino-action-submit-bg: #10b981;
+  --mino-action-submit-hover: #059669;
+  --mino-action-submit-text: #ffffff;
+  --mino-action-gap: 0.5rem;
+  
+  /* Toggle */
+  --mino-toggle-bg: #e5e7eb;
+  --mino-toggle-checked-bg: #2563eb;
+  --mino-toggle-thumb-bg: #ffffff;
+  --mino-toggle-thumb-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  
+  /* Full screen overlay */
+  --mino-fullscreen-bg: #ffffff;
+  --mino-fullscreen-z-index: 9999;
+  
+  /* Transitions */
+  --mino-transition-fast: 150ms ease-in-out;
+  --mino-transition-normal: 200ms ease-in-out;
+}
+
+/* Theme-specific styles */
+.mino-theme-light {
+  --mino-editor-bg: #ffffff;
+  --mino-editor-text: #1a202c;
+  --mino-editor-border: #e2e8f0;
+  --mino-readonly-bg: #f7fafc;
+}
+
+.mino-theme-dark {
+  --mino-editor-bg: #1a202c;
+  --mino-editor-text: #f7fafc;
+  --mino-editor-border: #374151;
+  --mino-readonly-bg: #2d3748;
+}
+
+/* Dark mode overrides */
+.dark {
+  --mino-editor-bg: #1a202c;
+  --mino-editor-text: #f7fafc;
+  --mino-editor-border: #374151;
+  --mino-readonly-bg: #2d3748;
+  
+  --mino-toolbar-bg: #1f2937;
+  --mino-toolbar-border: #374151;
+  --mino-toolbar-text: #d1d5db;
+  --mino-toolbar-hover-bg: #374151;
+  
+  --mino-button-secondary-bg: #374151;
+  --mino-button-secondary-hover: #4b5563;
+  --mino-button-secondary-text: #d1d5db;
+  
+  --mino-dropdown-bg: #1f2937;
+  --mino-dropdown-border: #374151;
+  --mino-dropdown-item-hover: #374151;
+  
+  --mino-status-bg: #1f2937;
+  --mino-status-text: #9ca3af;
+  --mino-status-border: #374151;
+  
+  --mino-action-run-bg: #374151;
+  --mino-action-run-hover: #4b5563;
+  --mino-action-run-text: #d1d5db;
+  
+  --mino-toggle-bg: #4b5563;
+  --mino-fullscreen-bg: #111827;
+}
+
+/* ================================
+   BASE CODE EDITOR STYLES
+   ================================ */
+
+.mino-code-editor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(
+    --mino-font-mono,
+    "Fira Code",
+    "Monaco",
+    "Cascadia Code",
+    "Roboto Mono",
+    monospace
+  );
+}
+
+/* Readonly range styling */
+.readonly-range {
+  position: relative;
+  background-color: var(--mino-readonly-bg) !important;
+  border-left: 3px solid #fbbf24 !important;
+  cursor: not-allowed !important;
+}
+
+.readonly-range::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    rgba(251, 191, 36, 0.1) 2px,
+    rgba(251, 191, 36, 0.1) 4px
+  );
+}
+
+/* Monaco editor customizations */
+.mino-code-editor .monaco-editor {
+  border-radius: 8px;
+  border: 1px solid var(--mino-editor-border);
+  background-color: var(--mino-editor-bg) !important;
+}
+
+.mino-code-editor .monaco-editor .view-lines {
+  color: var(--mino-editor-text) !important;
+}
+
+/* Loading state */
+.mino-code-editor .monaco-editor-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: var(--mino-editor-bg);
+  color: var(--mino-editor-text);
+  font-family: var(--mino-font-mono, monospace);
+}
+
+/* Focus styles */
+.mino-code-editor .monaco-editor.focused {
+  outline: 2px solid #3182ce;
+  outline-offset: 2px;
+  border-color: #3182ce;
+}
+
+/* Scrollbar styling */
+.mino-code-editor .monaco-scrollable-element .scrollbar {
+  background-color: transparent !important;
+}
+
+.mino-code-editor .monaco-scrollable-element .slider {
+  background-color: var(--mino-editor-border) !important;
+  border-radius: 4px !important;
+}
+
+.mino-code-editor .monaco-scrollable-element .slider:hover {
+  background-color: #a0aec0 !important;
+}
+
+/* Error and warning decorations */
+.mino-code-editor .monaco-editor .squiggly-error {
+  border-bottom: 2px wavy #e53e3e !important;
+}
+
+.mino-code-editor .monaco-editor .squiggly-warning {
+  border-bottom: 2px wavy #d69e2e !important;
+}
+
+.mino-code-editor .monaco-editor .squiggly-info {
+  border-bottom: 2px wavy #3182ce !important;
+}
+
+/* ================================
+   ENHANCED EDITOR COMPONENTS
+   ================================ */
+
+/* Enhanced Editor Container */
+.mino-enhanced-editor {
+  @apply relative flex flex-col;
+}
+
+.mino-enhanced-editor.fullscreen {
+  @apply fixed inset-0 z-[var(--mino-fullscreen-z-index)];
+  background-color: var(--mino-fullscreen-bg);
+}
+
+/* Toolbar */
+.mino-toolbar {
+  @apply flex items-center justify-between border-b;
+  background-color: var(--mino-toolbar-bg);
+  border-color: var(--mino-toolbar-border);
+  height: var(--mino-toolbar-height);
+  padding: var(--mino-toolbar-padding);
+  gap: var(--mino-toolbar-gap);
+}
+
+.mino-toolbar-left,
+.mino-toolbar-right {
+  @apply flex items-center;
+  gap: var(--mino-toolbar-gap);
+}
+
+/* Buttons */
+.mino-button {
+  @apply inline-flex items-center justify-center font-medium transition-colors duration-[var(--mino-transition-fast)] focus:outline-none focus:ring-2 focus:ring-offset-2;
+  border-radius: var(--mino-button-radius);
+  padding: var(--mino-button-padding);
+  font-size: var(--mino-button-font-size);
+}
+
+.mino-button-primary {
+  background-color: var(--mino-button-primary-bg);
+  color: var(--mino-button-primary-text);
+}
+
+.mino-button-primary:hover {
+  background-color: var(--mino-button-primary-hover);
+}
+
+.mino-button-secondary {
+  background-color: var(--mino-button-secondary-bg);
+  color: var(--mino-button-secondary-text);
+}
+
+.mino-button-secondary:hover {
+  background-color: var(--mino-button-secondary-hover);
+}
+
+/* Dropdown */
+.mino-dropdown {
+  @apply relative;
+}
+
+.mino-dropdown-trigger {
+  @apply inline-flex items-center justify-between;
+  gap: 0.5rem;
+}
+
+.mino-dropdown-content {
+  @apply absolute z-50 mt-1 overflow-auto;
+  background-color: var(--mino-dropdown-bg);
+  border: 1px solid var(--mino-dropdown-border);
+  border-radius: var(--mino-dropdown-radius);
+  box-shadow: var(--mino-dropdown-shadow);
+  max-height: var(--mino-dropdown-max-height);
+  min-width: 120px;
+}
+
+.mino-dropdown-item {
+  @apply block w-full px-3 py-2 text-sm text-left transition-colors duration-[var(--mino-transition-fast)] cursor-pointer;
+  color: var(--mino-toolbar-text);
+}
+
+.mino-dropdown-item:hover {
+  background-color: var(--mino-dropdown-item-hover);
+}
+
+/* Status Bar */
+.mino-status-bar {
+  @apply flex items-center justify-between border-t;
+  background-color: var(--mino-status-bg);
+  border-color: var(--mino-status-border);
+  height: var(--mino-status-height);
+  padding: var(--mino-status-padding);
+  font-size: var(--mino-status-font-size);
+  color: var(--mino-status-text);
+}
+
+/* Action Buttons */
+.mino-action-buttons {
+  @apply flex items-center;
+  gap: var(--mino-action-gap);
+}
+
+.mino-action-run {
+  background-color: var(--mino-action-run-bg);
+  color: var(--mino-action-run-text);
+}
+
+.mino-action-run:hover {
+  background-color: var(--mino-action-run-hover);
+}
+
+.mino-action-submit {
+  background-color: var(--mino-action-submit-bg);
+  color: var(--mino-action-submit-text);
+}
+
+.mino-action-submit:hover {
+  background-color: var(--mino-action-submit-hover);
+}
+
+/* Toggle */
+.mino-toggle {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-[var(--mino-transition-normal)];
+  background-color: var(--mino-toggle-bg);
+}
+
+.mino-toggle.checked {
+  background-color: var(--mino-toggle-checked-bg);
+}
+
+.mino-toggle-thumb {
+  @apply inline-block h-4 w-4 transform rounded-full transition duration-[var(--mino-transition-normal)];
+  background-color: var(--mino-toggle-thumb-bg);
+  box-shadow: var(--mino-toggle-thumb-shadow);
+}
+
+.mino-toggle.checked .mino-toggle-thumb {
+  @apply translate-x-6;
+}
+
+/* Editor Container */
+.mino-editor-container {
+  @apply flex-1 overflow-hidden;
+} 

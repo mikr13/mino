@@ -1,0 +1,28 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.0.5/schema.json",
+  "linter": {
+    "rules": {
+      "nursery": {
+        "noImportantStyles": "off"
+      },
+      "style": {
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": {
+            "strictCase": false,
+            "requireAscii": true,
+            "filenameCases": [
+              "kebab-case"
+            ]
+          }
+        }
+      },
+      "suspicious": {
+        "noEmptyBlockStatements": "off"
+      }
+    }
+  },
+  "extends": [
+    "ultracite"
+  ]
+}
