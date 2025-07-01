@@ -1,42 +1,29 @@
-import { getLanguageConfig } from '@/config/languages';
+import { DEFAULT_CODE_TEMPLATES, getLanguageConfig } from '@/config/languages';
 import {
   createMonacoTheme,
   getSystemTheme,
   getThemeConfig,
 } from '@/config/themes';
 import '@/index.css';
-import type { CodeEditorProps } from '@/types';
+import type {
+  CodeEditorProps,
+  CursorPosition,
+  SupportedLanguage,
+} from '@/types';
+import { formatCode, supportsFormatting } from '@/utils/formatter';
 import { setupReadonlyRanges } from '@/utils/readonly';
 import Editor from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActionButtons } from '../action-buttons';
+import { StatusBar } from '../status-bar';
+import { CodeEditorToolbar } from '../toolbar';
+import { getIcons } from './default-icons';
 
-/**
- * Monaco Editor React component with enhanced features for coding interviews and practice
- */
-export const CodeEditor: React.FC<CodeEditorProps> = ({
-  language = 'javascript',
-  value,
-  onChange,
-  readonlyRanges = [],
-  theme = 'auto',
-  height = '100%',
-  width = '100%',
-  className = '',
-  style,
-  options = {},
-  overrideStyles = false,
-  loading = 'Loading editor...',
-  onMount,
-  beforeMount,
-  onValidate,
-}) => {
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const monacoRef = useRef<typeof import('monaco-editor') | null>(null);
-  const readonlyCleanupRef = useRef<(() => void) | null>(null);
+// Helper function to setup theme resolution
+const useThemeResolution = (theme: 'light' | 'dark' | 'auto') => {
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
-  // Resolve theme based on preference
   useEffect(() => {
     const resolveTheme = (): 'light' | 'dark' => {
       if (theme === 'auto') {
@@ -66,8 +53,304 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     }
   }, [theme]);
 
+  return resolvedTheme;
+};
+
+// Helper function to setup editor handlers
+const useEditorHandlers = (
+  currentLanguage: SupportedLanguage,
+  currentValue: string,
+  onChange: CodeEditorProps['onChange'],
+  onFormat: CodeEditorProps['onFormat'],
+  onReset: CodeEditorProps['onReset'],
+  onRun: CodeEditorProps['onRun'],
+  onSubmit: CodeEditorProps['onSubmit'],
+  onLanguageChange: CodeEditorProps['onLanguageChange'],
+  onAutoCorrectToggle: CodeEditorProps['onAutoCorrectToggle'],
+  onFullScreenToggle: CodeEditorProps['onFullScreenToggle'],
+  defaultCode: CodeEditorProps['defaultCode'],
+  editorRef: React.MutableRefObject<editor.IStandaloneCodeEditor | null>,
+  originalValue: React.MutableRefObject<string | undefined>,
+  setCurrentValue: (value: string) => void,
+  setCurrentLanguage: (lang: SupportedLanguage) => void,
+  setIsDirty: (dirty: boolean) => void,
+  setIsFormatting: (formatting: boolean) => void,
+  setIsRunning: (running: boolean) => void,
+  setIsSubmitting: (submitting: boolean) => void
+) => {
+  // Handle language change
+  const handleLanguageChange = useCallback(
+    (newLanguage: SupportedLanguage) => {
+      setCurrentLanguage(newLanguage);
+
+      // Switch to default code for the new language if available
+      if (defaultCode?.[newLanguage]) {
+        const newCode = defaultCode[newLanguage];
+        setCurrentValue(newCode);
+        originalValue.current = newCode;
+        setIsDirty(false);
+        onChange?.(newCode);
+      }
+
+      onLanguageChange?.(newLanguage);
+    },
+    [
+      defaultCode,
+      onChange,
+      onLanguageChange,
+      setCurrentLanguage,
+      setCurrentValue,
+      setIsDirty,
+      originalValue,
+    ]
+  );
+
+  // Handle format
+  const handleFormat = useCallback(async () => {
+    if (!editorRef.current) {
+      onFormat?.();
+      return;
+    }
+
+    if (!supportsFormatting(currentLanguage)) {
+      // For languages that don't support Prettier, use Monaco's built-in formatting
+      try {
+        await editorRef.current
+          .getAction('editor.action.formatDocument')
+          ?.run();
+      } catch {
+        // Fallback to custom format handler
+        onFormat?.();
+      }
+      return;
+    }
+
+    setIsFormatting(true);
+    try {
+      const formatted = await formatCode(currentValue, currentLanguage);
+      if (formatted !== currentValue) {
+        setCurrentValue(formatted);
+        onChange?.(formatted);
+
+        // Update editor value
+        editorRef.current.setValue(formatted);
+      }
+      onFormat?.();
+    } catch {
+      // Formatting failed, try Monaco's built-in formatting as fallback
+      try {
+        await editorRef.current
+          .getAction('editor.action.formatDocument')
+          ?.run();
+      } catch {
+        // Call custom format handler if provided
+        onFormat?.();
+      }
+    } finally {
+      setIsFormatting(false);
+    }
+  }, [
+    currentValue,
+    currentLanguage,
+    onChange,
+    onFormat,
+    editorRef,
+    setCurrentValue,
+    setIsFormatting,
+  ]);
+
+  // Handle reset
+  const handleReset = useCallback(() => {
+    const resetCode =
+      defaultCode?.[currentLanguage] ||
+      DEFAULT_CODE_TEMPLATES[currentLanguage] ||
+      '';
+    setCurrentValue(resetCode);
+    originalValue.current = resetCode;
+    setIsDirty(false);
+    onChange?.(resetCode);
+    onReset?.();
+  }, [
+    currentLanguage,
+    defaultCode,
+    onChange,
+    onReset,
+    setCurrentValue,
+    setIsDirty,
+    originalValue,
+  ]);
+
+  // Handle auto correct toggle
+  const handleAutoCorrectToggle = useCallback(
+    (enabled: boolean) => {
+      onAutoCorrectToggle?.(enabled);
+    },
+    [onAutoCorrectToggle]
+  );
+
+  // Handle full screen toggle
+  const handleFullScreenToggle = useCallback(
+    (fullScreen: boolean) => {
+      onFullScreenToggle?.(fullScreen);
+    },
+    [onFullScreenToggle]
+  );
+
+  // Handle run
+  const handleRun = useCallback(async () => {
+    if (onRun) {
+      setIsRunning(true);
+      try {
+        await onRun();
+      } finally {
+        setIsRunning(false);
+      }
+    }
+  }, [onRun, setIsRunning]);
+
+  // Handle submit
+  const handleSubmit = useCallback(async () => {
+    if (onSubmit) {
+      setIsSubmitting(true);
+      try {
+        await onSubmit();
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  }, [onSubmit, setIsSubmitting]);
+
+  return {
+    handleLanguageChange,
+    handleFormat,
+    handleReset,
+    handleAutoCorrectToggle,
+    handleFullScreenToggle,
+    handleRun,
+    handleSubmit,
+  };
+};
+
+/**
+ * Monaco Editor React component with enhanced features for coding interviews and practice
+ */
+export const CodeEditor: React.FC<CodeEditorProps> = ({
+  // Base props
+  language = 'javascript',
+  value,
+  onChange,
+  readonlyRanges = [],
+  theme = 'auto',
+  height = '100%',
+  width = '100%',
+  className = '',
+  style,
+  options = {},
+  overrideStyles = false,
+  loading = 'Loading editor...',
+  onMount,
+  beforeMount,
+  onValidate,
+
+  // Enhanced props
+  showToolbar = false,
+  showLanguageSwitcher = true,
+  showFormatButton = true,
+  showResetButton = true,
+  showFullScreenButton = true,
+  showAutoCorrectToggle = true,
+  showStatusBar = false,
+  showActionButtons = false,
+
+  // Callbacks
+  onRun,
+  onSubmit,
+  onLanguageChange,
+  onAutoCorrectToggle,
+  onFullScreenToggle,
+  onReset,
+  onFormat,
+
+  // State
+  defaultCode,
+  autoCorrect = true,
+  isFullScreen = false,
+  showResetConfirmation = true,
+
+  // Icons
+  icons: userIcons,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Idc
+}) => {
+  const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>(
+    language as SupportedLanguage
+  );
+  const [currentValue, setCurrentValue] = useState(value);
+  const [cursorPosition, setCursorPosition] = useState<CursorPosition>({
+    lineNumber: 1,
+    column: 1,
+  });
+  const [isDirty, setIsDirty] = useState(false);
+  const [isFormatting, setIsFormatting] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [totalLines, setTotalLines] = useState(0);
+
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<typeof import('monaco-editor') | null>(null);
+  const readonlyCleanupRef = useRef<(() => void) | null>(null);
+  const originalValue = useRef(value);
+
+  // Merge user icons with defaults
+  const icons = getIcons(userIcons);
+
+  // Use theme resolution hook
+  const resolvedTheme = useThemeResolution(theme);
+
+  // Use editor handlers hook
+  const {
+    handleLanguageChange,
+    handleFormat,
+    handleReset,
+    handleAutoCorrectToggle,
+    handleFullScreenToggle,
+    handleRun,
+    handleSubmit,
+  } = useEditorHandlers(
+    currentLanguage,
+    currentValue,
+    onChange,
+    onFormat,
+    onReset,
+    onRun,
+    onSubmit,
+    onLanguageChange,
+    onAutoCorrectToggle,
+    onFullScreenToggle,
+    defaultCode,
+    editorRef,
+    originalValue,
+    setCurrentValue,
+    setCurrentLanguage,
+    setIsDirty,
+    setIsFormatting,
+    setIsRunning,
+    setIsSubmitting
+  );
+
+  // Update language when prop changes
+  useEffect(() => {
+    setCurrentLanguage(language as SupportedLanguage);
+  }, [language]);
+
+  // Update value when prop changes
+  useEffect(() => {
+    setCurrentValue(value);
+    originalValue.current = value;
+    setIsDirty(false);
+  }, [value]);
+
   // Get language configuration
-  const languageConfig = getLanguageConfig(language);
+  const languageConfig = getLanguageConfig(currentLanguage);
 
   // Handle before mount
   const handleBeforeMount = useCallback(
@@ -105,10 +388,32 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         );
       }
 
+      // Track cursor position for enhanced features
+      if (showStatusBar) {
+        editorInstance.onDidChangeCursorPosition((e) => {
+          setCursorPosition({
+            lineNumber: e.position.lineNumber,
+            column: e.position.column,
+          });
+        });
+      }
+
+      // Track content changes for dirty state
+      if (showStatusBar) {
+        editorInstance.onDidChangeModelContent(() => {
+          const currentContent = editorInstance.getValue();
+          setIsDirty(currentContent !== originalValue.current);
+          setTotalLines(editorInstance.getModel()?.getLineCount() || 0);
+        });
+
+        // Initial line count
+        setTotalLines(editorInstance.getModel()?.getLineCount() || 0);
+      }
+
       // Call user-provided onMount
       onMount?.(editorInstance, monaco);
     },
-    [onMount, readonlyRanges]
+    [onMount, readonlyRanges, showStatusBar]
   );
 
   // Handle editor value changes
@@ -118,6 +423,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       event?: editor.IModelContentChangedEvent
     ) => {
       if (newValue !== undefined) {
+        setCurrentValue(newValue);
         onChange?.(newValue, event);
       }
     },
@@ -189,7 +495,16 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     resolvedTheme === 'dark' ? 'mino-dark' : 'mino-light';
 
   // Prepare container classes
-  const containerClasses = ['mino', `mino-theme-${resolvedTheme}`, className]
+  const containerClasses = [
+    'mino',
+    `mino-theme-${resolvedTheme}`,
+    showToolbar || showStatusBar || showActionButtons
+      ? 'mino-enhanced-editor'
+      : '',
+    isFullScreen ? 'fullscreen' : '',
+    overrideStyles ? '' : '',
+    className,
+  ]
     .filter(Boolean)
     .join(' ');
 
@@ -197,24 +512,80 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     <div
       className={overrideStyles ? className : containerClasses}
       style={{
-        width,
-        height,
+        width: isFullScreen ? '100vw' : width,
+        height: isFullScreen ? '100vh' : height,
         ...style,
       }}
     >
-      <Editor
-        beforeMount={handleBeforeMount}
-        height="100%"
-        language={languageConfig.monacoLanguage}
-        loading={loading}
-        onChange={handleChange}
-        onMount={handleMount}
-        onValidate={handleValidate}
-        options={editorOptions}
-        theme={currentThemeName}
-        value={value}
-        width="100%"
-      />
+      {showToolbar && (
+        <CodeEditorToolbar
+          autoCorrect={autoCorrect}
+          currentLanguage={currentLanguage}
+          icons={icons}
+          isFormatting={isFormatting}
+          isFullScreen={isFullScreen}
+          onAutoCorrectToggle={
+            showAutoCorrectToggle ? handleAutoCorrectToggle : undefined
+          }
+          onFormat={showFormatButton ? handleFormat : undefined}
+          onFullScreenToggle={
+            showFullScreenButton ? handleFullScreenToggle : undefined
+          }
+          onLanguageChange={
+            showLanguageSwitcher ? handleLanguageChange : undefined
+          }
+          onReset={showResetButton ? handleReset : undefined}
+          showAutoCorrectToggle={showAutoCorrectToggle}
+          showFormatButton={showFormatButton}
+          showFullScreenButton={showFullScreenButton}
+          showLanguageSwitcher={showLanguageSwitcher}
+          showResetButton={showResetButton}
+          showResetConfirmation={showResetConfirmation}
+        />
+      )}
+
+      <div className="mino-editor-container">
+        <Editor
+          beforeMount={handleBeforeMount}
+          height="100%"
+          language={languageConfig.monacoLanguage}
+          loading={loading}
+          onChange={handleChange}
+          onMount={handleMount}
+          onValidate={handleValidate}
+          options={editorOptions}
+          theme={currentThemeName}
+          value={currentValue}
+          width="100%"
+        />
+      </div>
+
+      {showActionButtons && (onRun || onSubmit) && (
+        <div className="mino-fullscreen-overlay">
+          <ActionButtons
+            icons={{
+              run: icons.run,
+              submit: icons.submit,
+            }}
+            isRunning={isRunning}
+            isSubmitting={isSubmitting}
+            onRun={onRun ? handleRun : undefined}
+            onSubmit={onSubmit ? handleSubmit : undefined}
+            showRunButton={!!onRun}
+            showSubmitButton={!!onSubmit}
+          />
+        </div>
+      )}
+
+      {showStatusBar && (
+        <StatusBar
+          isDirty={isDirty}
+          isReadOnly={editorOptions.readOnly}
+          language={currentLanguage}
+          position={cursorPosition}
+          totalLines={totalLines}
+        />
+      )}
     </div>
   );
 };

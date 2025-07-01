@@ -42,12 +42,12 @@ export type CodeEditorOptions = {
   scrollBeyondLastLine?: boolean;
   renderWhitespace?: 'none' | 'boundary' | 'selection' | 'trailing' | 'all';
   cursorStyle?:
-    | 'line'
-    | 'block'
-    | 'underline'
-    | 'line-thin'
-    | 'block-outline'
-    | 'underline-thin';
+  | 'line'
+  | 'block'
+  | 'underline'
+  | 'line-thin'
+  | 'block-outline'
+  | 'underline-thin';
 };
 
 /**
@@ -127,12 +127,8 @@ export type CodeEditorProps = {
 
   /** Callback fired when editor validation occurs */
   onValidate?: (markers: monacoEditor.IMarker[]) => void;
-};
 
-/**
- * Enhanced props type for the CodeEditor with toolbar and additional features
- */
-export type EnhancedCodeEditorProps = CodeEditorProps & {
+  // Enhanced features
   // Toolbar features
   showToolbar?: boolean;
   showLanguageSwitcher?: boolean;

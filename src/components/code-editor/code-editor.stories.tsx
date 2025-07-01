@@ -91,6 +91,25 @@ export const CustomOptions: Story = () => {
   );
 };
 
+// Enhanced with toolbar
+export const WithToolbar: Story = () => {
+  const [code, setCode] = useState(DEFAULT_CODE_TEMPLATES.python);
+  const [language, setLanguage] = useState<SupportedLanguage>('python');
+
+  return (
+    <div style={{ height: '600px', width: '100%' }}>
+      <CodeEditor
+        defaultCode={DEFAULT_CODE_TEMPLATES}
+        language={language}
+        onChange={setCode}
+        onLanguageChange={setLanguage}
+        showToolbar={true}
+        value={code}
+      />
+    </div>
+  );
+};
+
 // Language comparison
 export const LanguageComparison: Story = () => {
   const [selectedLanguage, setSelectedLanguage] =
@@ -137,8 +156,12 @@ export const LanguageComparison: Story = () => {
 
       <div style={{ height: '500px' }}>
         <CodeEditor
+          defaultCode={DEFAULT_CODE_TEMPLATES}
           language={selectedLanguage}
           onChange={setCode}
+          onLanguageChange={setSelectedLanguage}
+          showLanguageSwitcher={true}
+          showToolbar={true}
           value={code}
         />
       </div>
@@ -146,7 +169,7 @@ export const LanguageComparison: Story = () => {
   );
 };
 
-// LeetCode-style problem template
+// LeetCode-style problem template with action buttons
 export const LeetCodeStyle: Story = () => {
   const [code, setCode] = useState(`class Solution:
     def twoSum(self, nums: List[int], target: int) -> List[int]:
@@ -159,6 +182,17 @@ export const LeetCodeStyle: Story = () => {
         """
         # Write your solution here
         pass`);
+  const [language, setLanguage] = useState<SupportedLanguage>('python');
+
+  const handleRun = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    alert('Code executed!');
+  };
+
+  const handleSubmit = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    alert('Solution submitted!');
+  };
 
   const readonlyRanges: ReadonlyRange[] = [
     { startLine: 1, endLine: 1 }, // Class declaration
@@ -166,18 +200,143 @@ export const LeetCodeStyle: Story = () => {
   ];
 
   return (
+    <div style={{ height: '600px', width: '100%' }}>
+      <CodeEditor
+        defaultCode={DEFAULT_CODE_TEMPLATES}
+        language={language}
+        onChange={setCode}
+        onLanguageChange={setLanguage}
+        onRun={handleRun}
+        onSubmit={handleSubmit}
+        readonlyRanges={readonlyRanges}
+        showActionButtons={true}
+        showStatusBar={true}
+        showToolbar={true}
+        value={code}
+      />
+    </div>
+  );
+};
+
+// Minimal toolbar
+export const MinimalToolbar: Story = () => {
+  const [code, setCode] = useState(DEFAULT_CODE_TEMPLATES.javascript);
+  const [language, setLanguage] = useState<SupportedLanguage>('javascript');
+
+  return (
     <div style={{ height: '500px', width: '100%' }}>
       <CodeEditor
-        language="python"
+        defaultCode={DEFAULT_CODE_TEMPLATES}
+        language={language}
         onChange={setCode}
-        options={{
-          fontSize: 14,
-          lineNumbers: 'on',
-          minimap: { enabled: true },
-          wordWrap: 'off',
+        onLanguageChange={setLanguage}
+        showAutoCorrectToggle={false}
+        showFormatButton={true}
+        showFullScreenButton={false}
+        showLanguageSwitcher={true}
+        showResetButton={false}
+        showStatusBar={false}
+        showToolbar={true}
+        value={code}
+      />
+    </div>
+  );
+};
+
+// Full screen demo
+export const FullScreenDemo: Story = () => {
+  const [code, setCode] = useState(DEFAULT_CODE_TEMPLATES.typescript);
+  const [language, setLanguage] = useState<SupportedLanguage>('typescript');
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  return (
+    <div style={{ height: '500px', width: '100%' }}>
+      <CodeEditor
+        defaultCode={DEFAULT_CODE_TEMPLATES}
+        isFullScreen={isFullScreen}
+        language={language}
+        onChange={setCode}
+        onFullScreenToggle={setIsFullScreen}
+        onLanguageChange={setLanguage}
+        showToolbar={true}
+        theme="dark"
+        value={code}
+      />
+    </div>
+  );
+};
+
+// Custom icon components (using simple emoji for demo)
+const CustomFormatIcon = () => <span>🎨</span>;
+const CustomResetIcon = () => <span>🔄</span>;
+const CustomRunIcon = () => <span>▶️</span>;
+const CustomSubmitIcon = () => <span>📤</span>;
+
+// Custom icons
+export const CustomIcons: Story = () => {
+  const [code, setCode] = useState(DEFAULT_CODE_TEMPLATES.java);
+  const [language, setLanguage] = useState<SupportedLanguage>('java');
+
+  return (
+    <div style={{ height: '500px', width: '100%' }}>
+      <CodeEditor
+        defaultCode={DEFAULT_CODE_TEMPLATES}
+        icons={{
+          format: CustomFormatIcon,
+          reset: CustomResetIcon,
+          run: CustomRunIcon,
+          submit: CustomSubmitIcon,
         }}
-        readonlyRanges={readonlyRanges}
-        theme="light"
+        language={language}
+        onChange={setCode}
+        onLanguageChange={setLanguage}
+        onRun={() => alert('Running with custom icon!')}
+        onSubmit={() => alert('Submitting with custom icon!')}
+        showActionButtons={true}
+        showToolbar={true}
+        value={code}
+      />
+    </div>
+  );
+};
+
+// All features enabled
+export const AllFeatures: Story = () => {
+  const [code, setCode] = useState(DEFAULT_CODE_TEMPLATES.cpp);
+  const [language, setLanguage] = useState<SupportedLanguage>('cpp');
+  const [autoCorrect, setAutoCorrect] = useState(true);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  const handleRun = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  };
+
+  const handleSubmit = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  };
+
+  return (
+    <div style={{ height: '600px', width: '100%' }}>
+      <CodeEditor
+        autoCorrect={autoCorrect}
+        defaultCode={DEFAULT_CODE_TEMPLATES}
+        isFullScreen={isFullScreen}
+        language={language}
+        onAutoCorrectToggle={setAutoCorrect}
+        onChange={setCode}
+        onFullScreenToggle={setIsFullScreen}
+        onLanguageChange={setLanguage}
+        onRun={handleRun}
+        onSubmit={handleSubmit}
+        showActionButtons={true}
+        showAutoCorrectToggle={true}
+        showFormatButton={true}
+        showFullScreenButton={true}
+        showLanguageSwitcher={true}
+        showResetButton={true}
+        showResetConfirmation={true}
+        showStatusBar={true}
+        showToolbar={true}
         value={code}
       />
     </div>
