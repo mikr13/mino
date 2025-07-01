@@ -1,6 +1,6 @@
 {
   "name": "@mikr13/mino",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A reusable React component library for LeetCode-style code editor using Monaco Editor",
   "type": "module",
   "main": "dist/index.js",
