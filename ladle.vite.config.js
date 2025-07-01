@@ -2,7 +2,6 @@ import react from '@vitejs/plugin-react';
 import autoprefixer from 'autoprefixer';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import tailwindcss from 'tailwindcss';
 import { defineConfig } from 'vite';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -44,7 +43,7 @@ export default defineConfig({
 
     css: {
         postcss: {
-            plugins: [tailwindcss, autoprefixer],
+            plugins: [autoprefixer],
         },
     },
 
