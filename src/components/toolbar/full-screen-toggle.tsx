@@ -48,7 +48,7 @@ export const FullScreenToggle: React.FC<FullScreenToggleProps> = ({
       title={isFullScreen ? 'Exit full screen (Esc)' : 'Enter full screen'}
       type="button"
     >
-      <Icon className="h-4 w-4" />
+      <Icon className="mino-toolbar-icon" />
     </button>
   );
 };

@@ -39,19 +39,17 @@ export const ResetButton: React.FC<ResetButtonProps> = ({
 
   if (showConfirm) {
     return (
-      <div className="flex items-center gap-2">
-        <span className="text-gray-600 text-sm dark:text-gray-400">
-          Reset code?
-        </span>
+      <div className="mino-toolbar-item">
+        <span className="mino-reset-confirm-text">Reset code?</span>
         <button
-          className="mino-button mino-button-primary px-2 py-1 text-xs"
+          className="mino-button mino-button-primary mino-button-small"
           onClick={handleConfirm}
           type="button"
         >
           Yes
         </button>
         <button
-          className="mino-button mino-button-secondary px-2 py-1 text-xs"
+          className="mino-button mino-button-secondary mino-button-small"
           onClick={handleCancel}
           type="button"
         >
@@ -70,8 +68,8 @@ export const ResetButton: React.FC<ResetButtonProps> = ({
       title="Reset to default code"
       type="button"
     >
-      <ResetIcon className="h-4 w-4" />
-      <span className="hidden sm:inline">Reset</span>
+      <ResetIcon className="mino-toolbar-icon" />
+      <span className="mino-toolbar-text">Reset</span>
     </button>
   );
 };

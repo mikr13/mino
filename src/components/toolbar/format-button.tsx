@@ -28,8 +28,8 @@ export const FormatButton: React.FC<FormatButtonProps> = ({
       title="Format code"
       type="button"
     >
-      <FormatIcon className={`h-4 w-4 ${isFormatting ? 'animate-spin' : ''}`} />
-      <span className="hidden sm:inline">
+      <FormatIcon className={`mino-toolbar-icon ${isFormatting ? 'mino-spin' : ''}`} />
+      <span className="mino-toolbar-text">
         {isFormatting ? 'Formatting...' : 'Format'}
       </span>
     </button>

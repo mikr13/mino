@@ -37,7 +37,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
           onClick={onRun}
           type="button"
         >
-          <RunIcon className={`h-4 w-4 ${isRunning ? 'animate-spin' : ''}`} />
+          <RunIcon className={`mino-toolbar-icon ${isRunning ? 'mino-spin' : ''}`} />
           <span>{isRunning ? 'Running...' : 'Run'}</span>
         </button>
       )}
@@ -51,7 +51,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
           type="button"
         >
           <SubmitIcon
-            className={`h-4 w-4 ${isSubmitting ? 'animate-pulse' : ''}`}
+            className={`mino-toolbar-icon ${isSubmitting ? 'mino-pulse' : ''}`}
           />
           <span>{isSubmitting ? 'Submitting...' : 'Submit'}</span>
         </button>

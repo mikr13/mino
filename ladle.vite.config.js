@@ -1,5 +1,11 @@
 import react from '@vitejs/plugin-react';
+import autoprefixer from 'autoprefixer';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import tailwindcss from 'tailwindcss';
 import { defineConfig } from 'vite';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
     plugins: [react()],
@@ -28,9 +34,23 @@ export default defineConfig({
     // Ensure proper resolution for static hosting
     resolve: {
         alias: {
-            // Ensure React is properly resolved
-            'react': 'react',
-            'react-dom': 'react-dom',
+            '@': resolve(__dirname, 'src'),
+            '@/components': resolve(__dirname, 'src/components'),
+            '@/config': resolve(__dirname, 'src/config'),
+            '@/types': resolve(__dirname, 'src/types'),
+            '@/utils': resolve(__dirname, 'src/utils'),
         },
+    },
+
+    css: {
+        postcss: {
+            plugins: [tailwindcss, autoprefixer],
+        },
+    },
+
+    define: {
+        'process.env.NODE_ENV': JSON.stringify(
+            process.env.NODE_ENV || 'development'
+        ),
     },
 }); 

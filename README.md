@@ -6,7 +6,17 @@ A reusable React component library for LeetCode-style code editor using Monaco E
 
 ## 📖 Documentation
 
-View the interactive documentation and examples at: [https://mikr13.github.io/mino/](https://mikr13.github.io/mino/)
+**📚 [View Interactive Documentation & Setup Guide](https://mikr13.github.io/mino/?story=documentation--getting-started)**
+
+Explore the complete documentation with:
+
+- 🚀 **Getting Started Guide** - Installation and basic usage
+- 🎯 **Feature Overview** - All available features and capabilities  
+- 📋 **API Reference** - Complete props documentation
+- 🛠️ **Development Setup** - Contributing and development workflow
+- 💡 **Interactive Examples** - Live code editor demos
+
+**[Browse All Component Examples →](https://mikr13.github.io/mino/)**
 
 ## 🚀 Installation
 
@@ -31,6 +41,8 @@ function App() {
 }
 ```
 
+> 💡 **Try it live!** See interactive examples and advanced usage patterns in our [documentation](https://mikr13.github.io/mino/?story=documentation--getting-started).
+
 ## 🎯 Features
 
 - **Monaco Editor Integration**: Full-featured code editor with syntax highlighting
@@ -42,6 +54,8 @@ function App() {
 - **Accessibility**: ARIA compliant and keyboard navigation support
 
 ## 🛠️ Development
+
+> 💡 **For detailed development setup and contribution guidelines, visit our [comprehensive documentation](https://mikr13.github.io/mino/?story=documentation--getting-started#development).**
 
 ### Prerequisites
 
@@ -72,6 +86,8 @@ bun run dev
 - `bun run type-check` - Run TypeScript checks
 
 ## 📋 API Reference
+
+> 📋 **For the complete API reference with interactive examples, see our [documentation](https://mikr13.github.io/mino/?story=documentation--getting-started#api-reference).**
 
 ### CodeEditor Props
 

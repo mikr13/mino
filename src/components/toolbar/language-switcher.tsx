@@ -87,12 +87,11 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
         onClick={toggleDropdown}
         type="button"
       >
-        <LanguageIcon className="h-4 w-4" />
-        <span className="hidden sm:inline">{currentConfig.label}</span>
+        <LanguageIcon className="mino-toolbar-icon" />
+        <span className="mino-toolbar-text">{currentConfig.label}</span>
         <ChevronIcon
-          className={`h-4 w-4 transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          className={`mino-toolbar-icon mino-transition-transform ${isOpen ? 'mino-rotate-180' : ''
+            }`}
         />
       </button>
 
@@ -104,9 +103,8 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
 
             return (
               <button
-                className={`mino-dropdown-item ${
-                  isSelected ? 'font-medium' : ''
-                }`}
+                className={`mino-dropdown-item ${isSelected ? 'font-medium' : ''
+                  }`}
                 key={language}
                 onClick={() => handleLanguageSelect(language)}
                 type="button"

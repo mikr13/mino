@@ -20,9 +20,9 @@ export const AutoCorrectToggle: React.FC<AutoCorrectToggleProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <AutoCorrectIcon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-      <span className="hidden text-gray-700 text-sm sm:inline dark:text-gray-300">
+    <div className="mino-toolbar-item">
+      <AutoCorrectIcon className="mino-toolbar-icon" />
+      <span className="mino-toolbar-text">
         Auto
       </span>
       <button

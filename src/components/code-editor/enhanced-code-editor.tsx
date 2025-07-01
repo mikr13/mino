@@ -435,7 +435,7 @@ export const EnhancedCodeEditor: React.FC<EnhancedCodeEditorProps> = ({
       </div>
 
       {showActionButtons && (onRun || onSubmit) && (
-        <div className="border-gray-200 border-t p-3 dark:border-gray-700">
+        <div className="mino-fullscreen-overlay">
           <ActionButtons
             icons={{
               run: icons.run,

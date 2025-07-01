@@ -33,22 +33,22 @@ export const StatusBar: React.FC<StatusBarProps> = ({
 
   return (
     <div className="mino-status-bar">
-      <div className="flex items-center gap-4">
+      <div className="mino-status-section">
         <span>{formatPosition()}</span>
         {totalLines && (
-          <span className="text-gray-500 dark:text-gray-400">
+          <span className="mino-status-text">
             {totalLines} lines
           </span>
         )}
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="mino-status-section">
         <span
-          className={`${isDirty ? 'text-orange-600 dark:text-orange-400' : ''}`}
+          className={`mino-status-indicator ${isDirty ? 'modified' : ''}`}
         >
           {getStatus()}
         </span>
-        <span className="font-medium">{languageConfig.label}</span>
+        <span className="mino-status-language">{languageConfig.label}</span>
       </div>
     </div>
   );
