@@ -30,8 +30,8 @@
     "prepublishOnly": "bun run build && bun run type-check && bun run lint",
     "publish:npm": "npm publish",
     "publish:beta": "npm publish --tag beta",
-    "build-story": "ladle build",
-    "preview-story": "ladle preview"
+    "build:story": "ladle build",
+    "preview:story": "ladle preview"
   },
   "keywords": [
     "react",
