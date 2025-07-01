@@ -2,7 +2,6 @@
 
 A reusable React component library for LeetCode-style code editor using Monaco Editor. Designed for easy integration into coding interview platforms, educational tools, and practice environments.
 
-[![npm version](https://badge.fury.io/js/mino.svg)](https://badge.fury.io/js/mino)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 📖 Documentation
@@ -12,14 +11,14 @@ View the interactive documentation and examples at: [https://mikr13.github.io/mi
 ## 🚀 Installation
 
 ```bash
-npm install mino
+npm install @mikr13/mino
 ```
 
 ## 📦 Usage
 
 ```jsx
-import { CodeEditor } from 'mino';
-import 'mino/style.css';
+import { CodeEditor } from '@mikr13/mino';
+import '@mikr13/mino/style.css';
 
 function App() {
   return (
