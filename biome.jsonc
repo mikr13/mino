@@ -24,5 +24,16 @@
   },
   "extends": [
     "ultracite"
-  ]
+  ],
+  "files": {
+    "includes": [
+      "src/**/*.js",
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      ".ladle/**/*.js",
+      ".ladle/**/*.ts",
+      ".ladle/**/*.tsx",
+      "!src/**/*.css"
+    ]
+  }
 }
