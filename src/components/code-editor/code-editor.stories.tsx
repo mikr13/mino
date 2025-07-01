@@ -15,13 +15,18 @@ export const Basic: Story = () => {
   );
 };
 
-// Python example
-export const Python: Story = () => {
-  const [code, setCode] = useState(DEFAULT_CODE_TEMPLATES.python);
+// Light theme
+export const LightTheme: Story = () => {
+  const [code, setCode] = useState(DEFAULT_CODE_TEMPLATES.javascript);
 
   return (
     <div style={{ height: '500px', width: '100%' }}>
-      <CodeEditor language="python" onChange={setCode} value={code} />
+      <CodeEditor
+        language="javascript"
+        onChange={setCode}
+        theme="light"
+        value={code}
+      />
     </div>
   );
 };
@@ -64,27 +69,6 @@ console.log(solutionTemplate());`);
         language="javascript"
         onChange={setCode}
         readonlyRanges={readonlyRanges}
-        value={code}
-      />
-    </div>
-  );
-};
-
-// Custom options
-export const CustomOptions: Story = () => {
-  const [code, setCode] = useState(DEFAULT_CODE_TEMPLATES.javascript);
-
-  return (
-    <div style={{ height: '500px', width: '100%' }}>
-      <CodeEditor
-        language="javascript"
-        onChange={setCode}
-        options={{
-          fontSize: 16,
-          minimap: { enabled: false },
-          lineNumbers: 'off',
-          wordWrap: 'on',
-        }}
         value={code}
       />
     </div>
@@ -170,7 +154,7 @@ export const LanguageComparison: Story = () => {
 };
 
 // LeetCode-style problem template with action buttons
-export const LeetCodeStyle: Story = () => {
+export const LeetcodeStyle: Story = () => {
   const [code, setCode] = useState(`class Solution:
     def twoSum(self, nums: List[int], target: int) -> List[int]:
         """

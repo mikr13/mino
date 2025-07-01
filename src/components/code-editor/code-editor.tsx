@@ -1,234 +1,147 @@
-import { DEFAULT_CODE_TEMPLATES, getLanguageConfig } from '@/config/languages';
-import {
-  createMonacoTheme,
-  getSystemTheme,
-  getThemeConfig,
-} from '@/config/themes';
+import { DEFAULT_EDITOR_OPTIONS } from '@/config/editor';
+import { getLanguageConfig } from '@/config/languages';
+import { createMonacoTheme, getThemeConfig } from '@/config/themes';
+import { useEditorHandlers } from '@/hooks/useEditorHandlers';
+import { useEditorState } from '@/hooks/useEditorState';
+import { useThemeResolution } from '@/hooks/useThemeResolution';
 import '@/index.css';
-import type {
-  CodeEditorProps,
-  CursorPosition,
-  SupportedLanguage,
-} from '@/types';
-import { formatCode, supportsFormatting } from '@/utils/formatter';
+import type { CodeEditorProps, SupportedLanguage } from '@/types';
 import { setupReadonlyRanges } from '@/utils/readonly';
 import Editor from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { ActionButtons } from '../action-buttons';
 import { StatusBar } from '../status-bar';
 import { CodeEditorToolbar } from '../toolbar';
 import { getIcons } from './default-icons';
 
-// Helper function to setup theme resolution
-const useThemeResolution = (theme: 'light' | 'dark' | 'auto') => {
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
-
-  useEffect(() => {
-    const resolveTheme = (): 'light' | 'dark' => {
-      if (theme === 'auto') {
-        return getSystemTheme();
-      }
-      return theme;
-    };
-
-    const updateTheme = () => {
-      const newTheme = resolveTheme();
-      setResolvedTheme(newTheme);
-    };
-
-    updateTheme();
-
-    // Listen for system theme changes when using auto theme
-    if (
-      theme === 'auto' &&
-      typeof window !== 'undefined' &&
-      window.matchMedia
-    ) {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => updateTheme();
-
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
-  }, [theme]);
-
-  return resolvedTheme;
+// Helper function to setup container classes
+const getContainerClasses = (
+  resolvedTheme: 'light' | 'dark',
+  showToolbar: boolean,
+  showStatusBar: boolean,
+  showActionButtons: boolean,
+  isFullScreen: boolean,
+  overrideStyles: boolean,
+  className: string
+) => {
+  return [
+    'mino',
+    `mino-theme-${resolvedTheme}`,
+    showToolbar || showStatusBar || showActionButtons
+      ? 'mino-enhanced-editor'
+      : '',
+    isFullScreen ? 'mino-fullscreen' : '',
+    overrideStyles ? '' : '',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 };
 
-// Helper function to setup editor handlers
-const useEditorHandlers = (
-  currentLanguage: SupportedLanguage,
-  currentValue: string,
-  onChange: CodeEditorProps['onChange'],
-  onFormat: CodeEditorProps['onFormat'],
-  onReset: CodeEditorProps['onReset'],
-  onRun: CodeEditorProps['onRun'],
-  onSubmit: CodeEditorProps['onSubmit'],
-  onLanguageChange: CodeEditorProps['onLanguageChange'],
-  onAutoCorrectToggle: CodeEditorProps['onAutoCorrectToggle'],
-  onFullScreenToggle: CodeEditorProps['onFullScreenToggle'],
-  defaultCode: CodeEditorProps['defaultCode'],
-  editorRef: React.MutableRefObject<editor.IStandaloneCodeEditor | null>,
+// Helper function to setup editor mount handlers
+const useEditorMountHandlers = (
+  onMount: CodeEditorProps['onMount'],
+  beforeMount: CodeEditorProps['beforeMount'],
+  readonlyRanges: NonNullable<CodeEditorProps['readonlyRanges']>,
+  showStatusBar: boolean,
+  actions: ReturnType<typeof useEditorState>[1],
   originalValue: React.MutableRefObject<string | undefined>,
-  setCurrentValue: (value: string) => void,
-  setCurrentLanguage: (lang: SupportedLanguage) => void,
-  setIsDirty: (dirty: boolean) => void,
-  setIsFormatting: (formatting: boolean) => void,
-  setIsRunning: (running: boolean) => void,
-  setIsSubmitting: (submitting: boolean) => void
+  editorRef: React.MutableRefObject<editor.IStandaloneCodeEditor | null>,
+  monacoRef: React.MutableRefObject<typeof import('monaco-editor') | null>,
+  readonlyCleanupRef: React.MutableRefObject<(() => void) | null>
 ) => {
-  // Handle language change
-  const handleLanguageChange = useCallback(
-    (newLanguage: SupportedLanguage) => {
-      setCurrentLanguage(newLanguage);
-
-      // Switch to default code for the new language if available
-      if (defaultCode?.[newLanguage]) {
-        const newCode = defaultCode[newLanguage];
-        setCurrentValue(newCode);
-        originalValue.current = newCode;
-        setIsDirty(false);
-        onChange?.(newCode);
-      }
-
-      onLanguageChange?.(newLanguage);
+  // Setup cursor position tracking
+  const setupCursorTracking = useCallback(
+    (editorInstance: editor.IStandaloneCodeEditor) => {
+      editorInstance.onDidChangeCursorPosition((e) => {
+        actions.setCursorPosition({
+          lineNumber: e.position.lineNumber,
+          column: e.position.column,
+        });
+      });
     },
-    [
-      defaultCode,
-      onChange,
-      onLanguageChange,
-      setCurrentLanguage,
-      setCurrentValue,
-      setIsDirty,
-      originalValue,
-    ]
+    [actions]
   );
 
-  // Handle format
-  const handleFormat = useCallback(async () => {
-    if (!editorRef.current) {
-      onFormat?.();
-      return;
-    }
+  // Setup content change tracking
+  const setupContentTracking = useCallback(
+    (editorInstance: editor.IStandaloneCodeEditor) => {
+      editorInstance.onDidChangeModelContent(() => {
+        const currentContent = editorInstance.getValue();
+        actions.setIsDirty(currentContent !== originalValue.current);
+        actions.setTotalLines(editorInstance.getModel()?.getLineCount() || 0);
+      });
 
-    if (!supportsFormatting(currentLanguage)) {
-      // For languages that don't support Prettier, use Monaco's built-in formatting
-      try {
-        await editorRef.current
-          .getAction('editor.action.formatDocument')
-          ?.run();
-      } catch {
-        // Fallback to custom format handler
-        onFormat?.();
-      }
-      return;
-    }
-
-    setIsFormatting(true);
-    try {
-      const formatted = await formatCode(currentValue, currentLanguage);
-      if (formatted !== currentValue) {
-        setCurrentValue(formatted);
-        onChange?.(formatted);
-
-        // Update editor value
-        editorRef.current.setValue(formatted);
-      }
-      onFormat?.();
-    } catch {
-      // Formatting failed, try Monaco's built-in formatting as fallback
-      try {
-        await editorRef.current
-          .getAction('editor.action.formatDocument')
-          ?.run();
-      } catch {
-        // Call custom format handler if provided
-        onFormat?.();
-      }
-    } finally {
-      setIsFormatting(false);
-    }
-  }, [
-    currentValue,
-    currentLanguage,
-    onChange,
-    onFormat,
-    editorRef,
-    setCurrentValue,
-    setIsFormatting,
-  ]);
-
-  // Handle reset
-  const handleReset = useCallback(() => {
-    const resetCode =
-      defaultCode?.[currentLanguage] ||
-      DEFAULT_CODE_TEMPLATES[currentLanguage] ||
-      '';
-    setCurrentValue(resetCode);
-    originalValue.current = resetCode;
-    setIsDirty(false);
-    onChange?.(resetCode);
-    onReset?.();
-  }, [
-    currentLanguage,
-    defaultCode,
-    onChange,
-    onReset,
-    setCurrentValue,
-    setIsDirty,
-    originalValue,
-  ]);
-
-  // Handle auto correct toggle
-  const handleAutoCorrectToggle = useCallback(
-    (enabled: boolean) => {
-      onAutoCorrectToggle?.(enabled);
+      // Initial line count
+      actions.setTotalLines(editorInstance.getModel()?.getLineCount() || 0);
     },
-    [onAutoCorrectToggle]
+    [actions, originalValue]
   );
 
-  // Handle full screen toggle
-  const handleFullScreenToggle = useCallback(
-    (fullScreen: boolean) => {
-      onFullScreenToggle?.(fullScreen);
+  // Setup readonly ranges
+  const setupReadonly = useCallback(
+    (
+      editorInstance: editor.IStandaloneCodeEditor,
+      monaco: typeof import('monaco-editor')
+    ) => {
+      if (readonlyRanges.length > 0) {
+        readonlyCleanupRef.current = setupReadonlyRanges(
+          editorInstance,
+          monaco,
+          readonlyRanges
+        );
+      }
     },
-    [onFullScreenToggle]
+    [readonlyRanges, readonlyCleanupRef]
   );
 
-  // Handle run
-  const handleRun = useCallback(async () => {
-    if (onRun) {
-      setIsRunning(true);
-      try {
-        await onRun();
-      } finally {
-        setIsRunning(false);
+  // Setup enhanced features
+  const setupEnhancedFeatures = useCallback(
+    (editorInstance: editor.IStandaloneCodeEditor) => {
+      if (showStatusBar) {
+        setupCursorTracking(editorInstance);
+        setupContentTracking(editorInstance);
       }
-    }
-  }, [onRun, setIsRunning]);
+    },
+    [showStatusBar, setupCursorTracking, setupContentTracking]
+  );
 
-  // Handle submit
-  const handleSubmit = useCallback(async () => {
-    if (onSubmit) {
-      setIsSubmitting(true);
-      try {
-        await onSubmit();
-      } finally {
-        setIsSubmitting(false);
-      }
-    }
-  }, [onSubmit, setIsSubmitting]);
+  const handleBeforeMount = useCallback(
+    (monaco: typeof import('monaco-editor')) => {
+      monacoRef.current = monaco;
 
-  return {
-    handleLanguageChange,
-    handleFormat,
-    handleReset,
-    handleAutoCorrectToggle,
-    handleFullScreenToggle,
-    handleRun,
-    handleSubmit,
-  };
+      // Register custom themes
+      const lightTheme = getThemeConfig('light');
+      const darkTheme = getThemeConfig('dark');
+
+      monaco.editor.defineTheme(lightTheme.name, createMonacoTheme(lightTheme));
+      monaco.editor.defineTheme(darkTheme.name, createMonacoTheme(darkTheme));
+
+      // Call user-provided beforeMount
+      beforeMount?.(monaco);
+    },
+    [beforeMount, monacoRef]
+  );
+
+  const handleMount = useCallback(
+    (
+      editorInstance: editor.IStandaloneCodeEditor,
+      monaco: typeof import('monaco-editor')
+    ) => {
+      editorRef.current = editorInstance;
+      monacoRef.current = monaco;
+
+      setupReadonly(editorInstance, monaco);
+      setupEnhancedFeatures(editorInstance);
+
+      // Call user-provided onMount
+      onMount?.(editorInstance, monaco);
+    },
+    [onMount, setupReadonly, setupEnhancedFeatures, editorRef, monacoRef]
+  );
+
+  return { handleBeforeMount, handleMount };
 };
 
 /**
@@ -279,45 +192,20 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
   // Icons
   icons: userIcons,
+
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Idc
 }) => {
-  const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>(
-    language as SupportedLanguage
-  );
-  const [currentValue, setCurrentValue] = useState(value);
-  const [cursorPosition, setCursorPosition] = useState<CursorPosition>({
-    lineNumber: 1,
-    column: 1,
-  });
-  const [isDirty, setIsDirty] = useState(false);
-  const [isFormatting, setIsFormatting] = useState(false);
-  const [isRunning, setIsRunning] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [totalLines, setTotalLines] = useState(0);
-
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<typeof import('monaco-editor') | null>(null);
   const readonlyCleanupRef = useRef<(() => void) | null>(null);
   const originalValue = useRef(value);
 
-  // Merge user icons with defaults
-  const icons = getIcons(userIcons);
-
-  // Use theme resolution hook
+  // Use hooks
   const resolvedTheme = useThemeResolution(theme);
-
-  // Use editor handlers hook
-  const {
-    handleLanguageChange,
-    handleFormat,
-    handleReset,
-    handleAutoCorrectToggle,
-    handleFullScreenToggle,
-    handleRun,
-    handleSubmit,
-  } = useEditorHandlers(
-    currentLanguage,
-    currentValue,
+  const [state, actions] = useEditorState(language as SupportedLanguage, value);
+  const handlers = useEditorHandlers({
+    currentLanguage: state.currentLanguage,
+    currentValue: state.currentValue,
     onChange,
     onFormat,
     onReset,
@@ -329,91 +217,23 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     defaultCode,
     editorRef,
     originalValue,
-    setCurrentValue,
-    setCurrentLanguage,
-    setIsDirty,
-    setIsFormatting,
-    setIsRunning,
-    setIsSubmitting
-  );
+    actions,
+  });
 
-  // Update language when prop changes
-  useEffect(() => {
-    setCurrentLanguage(language as SupportedLanguage);
-  }, [language]);
+  // Merge user icons with defaults
+  const icons = getIcons(userIcons);
 
-  // Update value when prop changes
-  useEffect(() => {
-    setCurrentValue(value);
-    originalValue.current = value;
-    setIsDirty(false);
-  }, [value]);
-
-  // Get language configuration
-  const languageConfig = getLanguageConfig(currentLanguage);
-
-  // Handle before mount
-  const handleBeforeMount = useCallback(
-    (monaco: typeof import('monaco-editor')) => {
-      monacoRef.current = monaco;
-
-      // Register custom themes
-      const lightTheme = getThemeConfig('light');
-      const darkTheme = getThemeConfig('dark');
-
-      monaco.editor.defineTheme(lightTheme.name, createMonacoTheme(lightTheme));
-      monaco.editor.defineTheme(darkTheme.name, createMonacoTheme(darkTheme));
-
-      // Call user-provided beforeMount
-      beforeMount?.(monaco);
-    },
-    [beforeMount]
-  );
-
-  // Handle editor mount
-  const handleMount = useCallback(
-    (
-      editorInstance: editor.IStandaloneCodeEditor,
-      monaco: typeof import('monaco-editor')
-    ) => {
-      editorRef.current = editorInstance;
-      monacoRef.current = monaco;
-
-      // Setup readonly ranges
-      if (readonlyRanges.length > 0) {
-        readonlyCleanupRef.current = setupReadonlyRanges(
-          editorInstance,
-          monaco,
-          readonlyRanges
-        );
-      }
-
-      // Track cursor position for enhanced features
-      if (showStatusBar) {
-        editorInstance.onDidChangeCursorPosition((e) => {
-          setCursorPosition({
-            lineNumber: e.position.lineNumber,
-            column: e.position.column,
-          });
-        });
-      }
-
-      // Track content changes for dirty state
-      if (showStatusBar) {
-        editorInstance.onDidChangeModelContent(() => {
-          const currentContent = editorInstance.getValue();
-          setIsDirty(currentContent !== originalValue.current);
-          setTotalLines(editorInstance.getModel()?.getLineCount() || 0);
-        });
-
-        // Initial line count
-        setTotalLines(editorInstance.getModel()?.getLineCount() || 0);
-      }
-
-      // Call user-provided onMount
-      onMount?.(editorInstance, monaco);
-    },
-    [onMount, readonlyRanges, showStatusBar]
+  // Use mount handlers
+  const { handleBeforeMount, handleMount } = useEditorMountHandlers(
+    onMount,
+    beforeMount,
+    readonlyRanges || [],
+    showStatusBar,
+    actions,
+    originalValue,
+    editorRef,
+    monacoRef,
+    readonlyCleanupRef
   );
 
   // Handle editor value changes
@@ -423,11 +243,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       event?: editor.IModelContentChangedEvent
     ) => {
       if (newValue !== undefined) {
-        setCurrentValue(newValue);
+        actions.setCurrentValue(newValue);
         onChange?.(newValue, event);
       }
     },
-    [onChange]
+    [onChange, actions]
   );
 
   // Handle validation
@@ -462,31 +282,24 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     };
   }, []);
 
+  // Update language when prop changes
+  useEffect(() => {
+    actions.setCurrentLanguage(language as SupportedLanguage);
+  }, [language, actions]);
+
+  // Update value when prop changes
+  useEffect(() => {
+    actions.setCurrentValue(value);
+    originalValue.current = value;
+    actions.setIsDirty(false);
+  }, [value, actions]);
+
+  // Get language configuration
+  const languageConfig = getLanguageConfig(state.currentLanguage);
+
   // Prepare Monaco editor options
   const editorOptions: editor.IStandaloneEditorConstructionOptions = {
-    fontSize: 14,
-    fontFamily:
-      'var(--mino-font-mono, "Fira Code", "Monaco", "Cascadia Code", "Roboto Mono", monospace)',
-    lineHeight: 20,
-    minimap: { enabled: true },
-    lineNumbers: 'on',
-    wordWrap: 'off',
-    automaticLayout: true,
-    scrollBeyondLastLine: false,
-    renderWhitespace: 'boundary',
-    cursorStyle: 'line',
-    tabSize: 2,
-    insertSpaces: true,
-    detectIndentation: false,
-    folding: true,
-    foldingStrategy: 'indentation',
-    showFoldingControls: 'always',
-    bracketPairColorization: { enabled: true },
-    guides: {
-      bracketPairs: true,
-      indentation: true,
-    },
-    padding: { top: 16, bottom: 16 },
+    ...DEFAULT_EDITOR_OPTIONS,
     ...options,
   };
 
@@ -495,18 +308,15 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     resolvedTheme === 'dark' ? 'mino-dark' : 'mino-light';
 
   // Prepare container classes
-  const containerClasses = [
-    'mino',
-    `mino-theme-${resolvedTheme}`,
-    showToolbar || showStatusBar || showActionButtons
-      ? 'mino-enhanced-editor'
-      : '',
-    isFullScreen ? 'fullscreen' : '',
-    overrideStyles ? '' : '',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
+  const containerClasses = getContainerClasses(
+    resolvedTheme,
+    showToolbar,
+    showStatusBar,
+    showActionButtons,
+    isFullScreen,
+    overrideStyles,
+    className
+  );
 
   return (
     <div
@@ -520,21 +330,21 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       {showToolbar && (
         <CodeEditorToolbar
           autoCorrect={autoCorrect}
-          currentLanguage={currentLanguage}
+          currentLanguage={state.currentLanguage}
           icons={icons}
-          isFormatting={isFormatting}
+          isFormatting={state.isFormatting}
           isFullScreen={isFullScreen}
           onAutoCorrectToggle={
-            showAutoCorrectToggle ? handleAutoCorrectToggle : undefined
+            showAutoCorrectToggle ? handlers.handleAutoCorrectToggle : undefined
           }
-          onFormat={showFormatButton ? handleFormat : undefined}
+          onFormat={showFormatButton ? handlers.handleFormat : undefined}
           onFullScreenToggle={
-            showFullScreenButton ? handleFullScreenToggle : undefined
+            showFullScreenButton ? handlers.handleFullScreenToggle : undefined
           }
           onLanguageChange={
-            showLanguageSwitcher ? handleLanguageChange : undefined
+            showLanguageSwitcher ? handlers.handleLanguageChange : undefined
           }
-          onReset={showResetButton ? handleReset : undefined}
+          onReset={showResetButton ? handlers.handleReset : undefined}
           showAutoCorrectToggle={showAutoCorrectToggle}
           showFormatButton={showFormatButton}
           showFullScreenButton={showFullScreenButton}
@@ -555,7 +365,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           onValidate={handleValidate}
           options={editorOptions}
           theme={currentThemeName}
-          value={currentValue}
+          value={state.currentValue}
           width="100%"
         />
       </div>
@@ -567,10 +377,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               run: icons.run,
               submit: icons.submit,
             }}
-            isRunning={isRunning}
-            isSubmitting={isSubmitting}
-            onRun={onRun ? handleRun : undefined}
-            onSubmit={onSubmit ? handleSubmit : undefined}
+            isRunning={state.isRunning}
+            isSubmitting={state.isSubmitting}
+            onRun={onRun ? handlers.handleRun : undefined}
+            onSubmit={onSubmit ? handlers.handleSubmit : undefined}
             showRunButton={!!onRun}
             showSubmitButton={!!onSubmit}
           />
@@ -579,11 +389,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
       {showStatusBar && (
         <StatusBar
-          isDirty={isDirty}
+          isDirty={state.isDirty}
           isReadOnly={editorOptions.readOnly}
-          language={currentLanguage}
-          position={cursorPosition}
-          totalLines={totalLines}
+          language={state.currentLanguage}
+          position={state.cursorPosition}
+          totalLines={state.totalLines}
         />
       )}
     </div>

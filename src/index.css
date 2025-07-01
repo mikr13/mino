@@ -4,7 +4,6 @@
    CSS VARIABLES & THEME SYSTEM
    ================================ */
 
-/* Enhanced Code Editor CSS Variables */
 :root {
   /* Core Editor Variables */
   --mino-font-mono:
@@ -154,6 +153,8 @@
 
 .mino {
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -252,15 +253,8 @@
 /* ================================
    ENHANCED EDITOR COMPONENTS
    ================================ */
-
 /* Enhanced Editor Container */
-.mino-enhanced-editor {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.mino-enhanced-editor.fullscreen {
+.mino-fullscreen {
   position: fixed;
   top: 0;
   right: 0;
