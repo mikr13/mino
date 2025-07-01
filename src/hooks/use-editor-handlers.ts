@@ -3,7 +3,7 @@ import type { CodeEditorProps, SupportedLanguage } from '@/types';
 import { formatCode, supportsFormatting } from '@/utils/formatter';
 import type { editor } from 'monaco-editor';
 import { useCallback } from 'react';
-import type { EditorStateActions } from './useEditorState';
+import type { EditorStateActions } from './use-editor-state';
 
 type UseEditorHandlersProps = {
   currentLanguage: SupportedLanguage;

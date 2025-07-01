@@ -1,9 +1,9 @@
 import { DEFAULT_EDITOR_OPTIONS } from '@/config/editor';
 import { getLanguageConfig } from '@/config/languages';
 import { createMonacoTheme, getThemeConfig } from '@/config/themes';
-import { useEditorHandlers } from '@/hooks/useEditorHandlers';
-import { useEditorState } from '@/hooks/useEditorState';
-import { useThemeResolution } from '@/hooks/useThemeResolution';
+import { useEditorHandlers } from '@/hooks/use-editor-handlers';
+import { useEditorState } from '@/hooks/use-editor-state';
+import { useThemeResolution } from '@/hooks/use-theme-resolution';
 import '@/index.css';
 import type { CodeEditorProps, SupportedLanguage } from '@/types';
 import { setupReadonlyRanges } from '@/utils/readonly';
