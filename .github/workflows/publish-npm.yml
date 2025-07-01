@@ -41,7 +41,6 @@ jobs:
         run: |
           bun run type-check
           bun run lint
-          bun run build
 
       - name: Bump version (manual trigger)
         if: github.event_name == 'workflow_dispatch'
@@ -56,6 +55,6 @@ jobs:
           git push origin refs/heads/main --tags
 
       - name: Publish to NPM
-        run: bun publish
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

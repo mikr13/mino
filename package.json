@@ -27,7 +27,7 @@
     "format": "biome format --write src",
     "check": "biome check src",
     "type-check": "tsc --noEmit",
-    "prepublishOnly": "bun run build && bun run type-check && bun run lint",
+    "prepublishOnly": "bun run build",
     "publish:npm": "npm publish",
     "publish:beta": "npm publish --tag beta",
     "build:story": "ladle build",
