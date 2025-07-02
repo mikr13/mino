@@ -225,6 +225,219 @@ function App() {
     </div>
 
     <h2 className="mino-doc-heading-2">
+      🎨 Styling & Customization
+    </h2>
+
+    <h3 className='mino-doc-heading-3'>
+      CSS Variables
+    </h3>
+
+    <p className="mino-doc-mb-4">
+      Mino uses CSS variables for theming and customization. You can override these variables in your own CSS to customize the appearance:
+    </p>
+
+    <div className='mino-doc-code-block mino-doc-mb-6'>
+      <pre>{`:root {
+  /* Core Editor Variables */
+  --mino-font-mono: "Your Custom Font", monospace;
+  --mino-font-size: 16px;
+
+  /* Editor Theme */
+  --mino-editor-bg: #fafafa;
+  --mino-editor-text: #2d3748;
+  --mino-editor-border: #cbd5e0;
+
+  /* Custom Toolbar Colors */
+  --mino-toolbar-bg: #f7fafc;
+  --mino-toolbar-text: #4a5568;
+}`}</pre>
+    </div>
+
+    <h3 className='mino-doc-heading-3'>
+      Theme Customization
+    </h3>
+
+    <p className="mino-doc-mb-4">
+      Mino supports light and dark themes out of the box. You can also create your own theme by overriding the theme-specific variables:
+    </p>
+
+    <div className='mino-doc-code-block mino-doc-mb-6'>
+      <pre>{`/* Custom Dark Theme */
+.mino-theme-dark {
+  --mino-editor-bg: #1a202c;
+  --mino-editor-text: #f7fafc;
+  --mino-editor-border: #4a5568;
+  --mino-readonly-bg: #2d3748;
+}
+
+/* Custom Light Theme */
+.mino-theme-light {
+  --mino-editor-bg: #ffffff;
+  --mino-editor-text: #1a202c;
+  --mino-editor-border: #e2e8f0;
+  --mino-readonly-bg: #f7fafc;
+}`}</pre>
+    </div>
+
+    <h3 className='mino-doc-heading-3'>
+      Component-Specific Styling
+    </h3>
+
+    <div className="mino-doc-grid mino-doc-grid-2 mino-doc-mb-6">
+      <div className='mino-doc-card'>
+        <h4 className="mino-doc-card-title">
+          Toolbar Customization
+        </h4>
+        <div className='mino-doc-code-block'>
+          <pre>{`/* Custom Toolbar */
+.mino-toolbar {
+  --mino-toolbar-height: 56px;
+  --mino-toolbar-padding: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}`}</pre>
+        </div>
+      </div>
+
+      <div className='mino-doc-card'>
+        <h4 className="mino-doc-card-title">
+          Status Bar Styling
+        </h4>
+        <div className='mino-doc-code-block'>
+          <pre>{`/* Custom Status Bar */
+.mino-status-bar {
+  --mino-status-height: 40px;
+  --mino-status-bg: #f8fafc;
+  border-top: 2px solid #e2e8f0;
+}`}</pre>
+        </div>
+      </div>
+    </div>
+
+    <h3 className='mino-doc-heading-3'>
+      Available CSS Variables
+    </h3>
+
+    <div className='mino-doc-table-container mino-doc-mb-6'>
+      <table className="mino-doc-table">
+        <thead>
+          <tr>
+            <th className='mino-doc-table-header-cell'>Variable</th>
+            <th className='mino-doc-table-header-cell'>Default Value</th>
+            <th className='mino-doc-table-header-cell'>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className='mino-doc-table-cell mino-doc-table-cell-mono'>--mino-font-mono</td>
+            <td className='mino-doc-table-cell mino-doc-table-cell-mono'>"Fira Code", monospace</td>
+            <td className='mino-doc-table-cell'>Editor font family</td>
+          </tr>
+          <tr>
+            <td className='mino-doc-table-cell mino-doc-table-cell-mono'>--mino-font-size</td>
+            <td className='mino-doc-table-cell mino-doc-table-cell-mono'>14px</td>
+            <td className='mino-doc-table-cell'>Base font size</td>
+          </tr>
+          <tr>
+            <td className='mino-doc-table-cell mino-doc-table-cell-mono'>--mino-editor-bg</td>
+            <td className='mino-doc-table-cell mino-doc-table-cell-mono'>#ffffff</td>
+            <td className='mino-doc-table-cell'>Editor background color</td>
+          </tr>
+          <tr>
+            <td className='mino-doc-table-cell mino-doc-table-cell-mono'>--mino-toolbar-height</td>
+            <td className='mino-doc-table-cell mino-doc-table-cell-mono'>48px</td>
+            <td className='mino-doc-table-cell'>Toolbar height</td>
+          </tr>
+          <tr>
+            <td className='mino-doc-table-cell mino-doc-table-cell-mono'>--mino-status-height</td>
+            <td className='mino-doc-table-cell mino-doc-table-cell-mono'>32px</td>
+            <td className='mino-doc-table-cell'>Status bar height</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 className="mino-doc-heading-2">
+      🎭 Component Variations
+    </h2>
+
+    <h3 className='mino-doc-heading-3'>
+      Toolbar Configurations
+    </h3>
+
+    <div className='mino-doc-code-block mino-doc-mb-6'>
+      <pre>{`// Minimal Toolbar
+<CodeEditor
+  showToolbar={true}
+  showLanguageSwitcher={true}
+  showFormatButton={true}
+  showAutoCorrectToggle={false}
+  showFullScreenButton={false}
+  showResetButton={false}
+/>
+
+// Full Featured Toolbar
+<CodeEditor
+  showToolbar={true}
+  showLanguageSwitcher={true}
+  showFormatButton={true}
+  showAutoCorrectToggle={true}
+  showFullScreenButton={true}
+  showResetButton={true}
+  showThemeSwitcher={true}
+/>`}</pre>
+    </div>
+
+    <h3 className='mino-doc-heading-3'>
+      Custom Icons
+    </h3>
+
+    <div className='mino-doc-code-block mino-doc-mb-6'>
+      <pre>{`// Custom Icon Components
+const CustomFormatIcon = () => <span>🎨</span>;
+const CustomRunIcon = () => <span>▶️</span>;
+
+<CodeEditor
+  icons={{
+    format: CustomFormatIcon,
+    run: CustomRunIcon,
+    submit: CustomSubmitIcon,
+    reset: CustomResetIcon
+  }}
+  showActionButtons={true}
+  showToolbar={true}
+/>`}</pre>
+    </div>
+
+    <h3 className='mino-doc-heading-3'>
+      Readonly Ranges
+    </h3>
+
+    <div className='mino-doc-code-block mino-doc-mb-6'>
+      <pre>{`// Define readonly ranges
+const readonlyRanges = [
+  { startLine: 1, endLine: 2 }, // Header
+  { startLine: 6, endLine: 8 }, // Footer
+];
+
+<CodeEditor
+  readonlyRanges={readonlyRanges}
+  value={code}
+/>`}</pre>
+    </div>
+
+    <div className='mino-doc-alert mino-doc-alert-info mino-doc-mb-6'>
+      <div className="mino-doc-flex">
+        <div className="mino-doc-ml-3">
+          <p className='mino-doc-alert-text'>
+            <strong>Styling Tip:</strong> Readonly ranges can be customized using the
+            <code className='mino-doc-inline-code'>.readonly-range</code> class and
+            its pseudo-elements.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h2 className="mino-doc-heading-2">
       🛠️ Development
     </h2>
 

@@ -1,9 +1,10 @@
-import type { EditorIcons, SupportedLanguage } from '@/types';
+import type { EditorIcons, EditorTheme, SupportedLanguage } from '@/types';
 import { AutoCorrectToggle } from './auto-correct-toggle';
 import { FormatButton } from './format-button';
 import { FullScreenToggle } from './full-screen-toggle';
 import { LanguageSwitcher } from './language-switcher';
 import { ResetButton } from './reset-button';
+import { ThemeSwitcher } from './theme-switcher';
 
 type CodeEditorToolbarProps = {
   // Language switcher
@@ -31,6 +32,11 @@ type CodeEditorToolbarProps = {
   isFullScreen?: boolean;
   onFullScreenToggle?: (isFullScreen: boolean) => void;
   showFullScreenButton?: boolean;
+
+  // Theme switcher
+  currentTheme: EditorTheme;
+  onThemeChange?: (theme: EditorTheme) => void;
+  showThemeSwitcher?: boolean;
 
   // General
   disabled?: boolean;
@@ -64,6 +70,11 @@ export const CodeEditorToolbar: React.FC<CodeEditorToolbarProps> = ({
   onFullScreenToggle,
   showFullScreenButton = true,
 
+  // Theme switcher
+  currentTheme,
+  onThemeChange,
+  showThemeSwitcher = true,
+
   // General
   disabled = false,
   icons,
@@ -95,6 +106,18 @@ export const CodeEditorToolbar: React.FC<CodeEditorToolbarProps> = ({
       </div>
 
       <div className="mino-toolbar-right">
+        {showThemeSwitcher && onThemeChange && (
+          <ThemeSwitcher
+            currentTheme={currentTheme}
+            disabled={disabled}
+            icons={{
+              theme: icons.theme,
+              chevronDown: icons.chevronDown,
+            }}
+            onThemeChange={onThemeChange}
+          />
+        )}
+
         {showFormatButton && onFormat && (
           <FormatButton
             disabled={disabled}

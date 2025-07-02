@@ -284,6 +284,29 @@ export const CustomIcons: Story = () => {
   );
 };
 
+// Theme switcher demo
+export const ThemeSwitcher: Story = () => {
+  const [code, setCode] = useState(DEFAULT_CODE_TEMPLATES.typescript);
+  const [language, setLanguage] = useState<SupportedLanguage>('typescript');
+  const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('auto');
+
+  return (
+    <div style={{ height: '500px', width: '100%' }}>
+      <CodeEditor
+        defaultCode={DEFAULT_CODE_TEMPLATES}
+        language={language}
+        onChange={setCode}
+        onLanguageChange={setLanguage}
+        onThemeChange={setTheme}
+        showThemeSwitcher={true}
+        showToolbar={true}
+        theme={theme}
+        value={code}
+      />
+    </div>
+  );
+};
+
 // All features enabled
 export const AllFeatures: Story = () => {
   const [code, setCode] = useState(DEFAULT_CODE_TEMPLATES.cpp);

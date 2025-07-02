@@ -6,62 +6,104 @@ A reusable React component library for LeetCode-style code editor using Monaco E
 
 ## 📖 Documentation
 
-**📚 [View Interactive Documentation & Setup Guide](https://mikr13.github.io/mino/?story=documentation--getting-started)**
+Explore our comprehensive documentation:
 
-Explore the complete documentation with:
+- 🚀 [Getting Started Guide](https://mikr13.github.io/mino/?story=documentation--getting-started) - Quick installation and basic setup
+- 🎯 [Feature Overview](https://mikr13.github.io/mino/?story=documentation--getting-started#features) - Detailed feature list and capabilities
+- 📋 [API Reference](https://mikr13.github.io/mino/?story=documentation--getting-started#api-reference) - Complete props and methods documentation
+- 🎨 [Styling Guide](https://mikr13.github.io/mino/?story=documentation--getting-started#styling--customization) - Theme customization and CSS variables
+- 🧩 [Component Examples](https://mikr13.github.io/mino/?path=/story/code-editor--basic) - Interactive component demos
+- 🛠️ [Development Guide](https://mikr13.github.io/mino/?story=documentation--getting-started#development) - Contributing and local setup
 
-- 🚀 **Getting Started Guide** - Installation and basic usage
-- 🎯 **Feature Overview** - All available features and capabilities  
-- 📋 **API Reference** - Complete props documentation
-- 🛠️ **Development Setup** - Contributing and development workflow
-- 💡 **Interactive Examples** - Live code editor demos
-
-**[Browse All Component Examples →](https://mikr13.github.io/mino/)**
-
-## 🚀 Installation
+## 🚀 Quick Start
 
 ```bash
+# Install the package
 npm install @mikr13/mino
-```
 
-## 📦 Usage
+# Or with pnpm
+pnpm add @mikr13/mino
+
+# Or with bun
+bun add @mikr13/mino
+```
 
 ```jsx
 import { CodeEditor } from '@mikr13/mino';
 import '@mikr13/mino/style.css';
 
 function App() {
+  const [code, setCode] = useState('console.log("Hello, World!");');
+  
   return (
     <CodeEditor
       language="javascript"
-      value="console.log('Hello, World!');"
-      onChange={(value) => console.log(value)}
+      value={code}
+      onChange={setCode}
+      showToolbar={true}
+      showStatusBar={true}
     />
   );
 }
 ```
 
-> 💡 **Try it live!** See interactive examples and advanced usage patterns in our [documentation](https://mikr13.github.io/mino/?story=documentation--getting-started).
+## 🎯 Key Features
 
-## 🎯 Features
+- **📝 Advanced Code Editing**
+  - Monaco Editor integration with full IDE features
+  - Multi-language syntax highlighting
+  - IntelliSense and auto-completion
+  - Error diagnostics and quick fixes
 
-- **Monaco Editor Integration**: Full-featured code editor with syntax highlighting
-- **Multiple Languages**: Support for JavaScript, TypeScript, Python, Java, C++, and more
-- **Customizable Themes**: Light and dark themes with custom styling options
-- **Auto-formatting**: Built-in code formatting with Prettier
-- **Type Safety**: Full TypeScript support
-- **Responsive Design**: Mobile-friendly responsive layout
-- **Accessibility**: ARIA compliant and keyboard navigation support
+- **🎨 Rich Customization**
+  - [Light/Dark themes](https://mikr13.github.io/mino/?path=/story/code-editor--theme-switcher)
+  - [Custom CSS variables](https://mikr13.github.io/mino/?story=documentation--getting-started#styling--customization)
+  - [Configurable toolbar](https://mikr13.github.io/mino/?path=/story/code-editor--minimal-toolbar)
+  - [Custom icons support](https://mikr13.github.io/mino/?path=/story/code-editor--custom-icons)
+
+- **🛠️ Developer Experience**
+  - [TypeScript support](https://mikr13.github.io/mino/?path=/story/code-editor--basic)
+  - [Readonly ranges](https://mikr13.github.io/mino/?path=/story/code-editor--with-readonly-ranges)
+  - [Format on demand](https://mikr13.github.io/mino/?path=/story/code-editor--with-toolbar)
+  - [Language switching](https://mikr13.github.io/mino/?path=/story/code-editor--language-comparison)
+
+- **🎭 UI Components**
+  - [Customizable toolbar](https://mikr13.github.io/mino/?path=/story/code-editor--with-toolbar)
+  - [Status bar](https://mikr13.github.io/mino/?path=/story/code-editor--leetcode-style)
+  - [Action buttons](https://mikr13.github.io/mino/?path=/story/code-editor--leetcode-style)
+  - [Full-screen mode](https://mikr13.github.io/mino/?path=/story/code-editor--full-screen-demo)
+
+## 🎨 Styling & Customization
+
+Mino provides extensive styling options through CSS variables:
+
+```css
+/* Custom theme example */
+:root {
+  --mino-editor-bg: #fafafa;
+  --mino-editor-text: #2d3748;
+  --mino-toolbar-bg: #f7fafc;
+  --mino-toolbar-text: #4a5568;
+}
+```
+
+[View all styling options →](https://mikr13.github.io/mino/?story=documentation--getting-started#styling--customization)
+
+## 🧩 Component Examples
+
+- [Basic Editor](https://mikr13.github.io/mino/?path=/story/code-editor--basic) - Simple code editor setup
+- [LeetCode Style](https://mikr13.github.io/mino/?path=/story/code-editor--leetcode-style) - Complete interview platform setup
+- [Theme Switcher](https://mikr13.github.io/mino/?path=/story/code-editor--theme-switcher) - Dark/Light theme demo
+- [Language Comparison](https://mikr13.github.io/mino/?path=/story/code-editor--language-comparison) - Multi-language support
+- [All Features](https://mikr13.github.io/mino/?path=/story/code-editor--all-features) - Full feature showcase
 
 ## 🛠️ Development
-
-> 💡 **For detailed development setup and contribution guidelines, visit our [comprehensive documentation](https://mikr13.github.io/mino/?story=documentation--getting-started#development).**
 
 ### Prerequisites
 
 - [Bun](https://bun.sh/) (recommended) or Node.js 22+
 
-### Setup
+### Local Setup
 
 ```bash
 # Clone the repository
@@ -79,56 +121,11 @@ bun run dev
 
 - `bun run dev` - Start Ladle development server
 - `bun run build` - Build the library
-- `bun run build-story` - Build Ladle documentation
-- `bun run preview-story` - Preview built documentation
+- `bun run build:story` - Build documentation
+- `bun run preview:story` - Preview documentation
 - `bun run lint` - Run linter
 - `bun run format` - Format code
 - `bun run type-check` - Run TypeScript checks
-
-## 📋 API Reference
-
-> 📋 **For the complete API reference with interactive examples, see our [documentation](https://mikr13.github.io/mino/?story=documentation--getting-started#api-reference).**
-
-### CodeEditor Props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | `""` | The code content |
-| `language` | `string` | `"javascript"` | Programming language |
-| `theme` | `"light" \| "dark"` | `"light"` | Editor theme |
-| `onChange` | `(value: string) => void` | - | Callback when content changes |
-| `onMount` | `(editor: monaco.editor.IStandaloneCodeEditor) => void` | - | Callback when editor mounts |
-| `readOnly` | `boolean` | `false` | Whether editor is read-only |
-| `height` | `string \| number` | `400` | Editor height |
-| `width` | `string \| number` | `"100%"` | Editor width |
-
-## 📦 Publishing
-
-### NPM Publishing
-
-The package is automatically published to NPM when you create a new release:
-
-1. **Manual Release**: Use GitHub Actions workflow
-   - Go to Actions → "Publish to NPM"
-   - Click "Run workflow"
-   - Select version type (patch/minor/major/prerelease)
-
-2. **Tag-based Release**: Push a git tag
-
-   ```bash
-   git tag v1.0.1
-   git push origin v1.0.1
-   ```
-
-### Prerequisites for Publishing
-
-1. **NPM Token**: Add `NPM_TOKEN` to GitHub repository secrets
-   - Generate token at [npmjs.com](https://www.npmjs.com/settings/tokens)
-   - Add as repository secret in GitHub
-
-2. **GitHub Pages**: Enable GitHub Pages in repository settings
-   - Go to Settings → Pages
-   - Source: GitHub Actions
 
 ## 🤝 Contributing
 
@@ -138,6 +135,8 @@ The package is automatically published to NPM when you create a new release:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+See our [Contributing Guide](https://mikr13.github.io/mino/?story=documentation--getting-started#contributing) for more details.
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
@@ -145,5 +144,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## 🙏 Acknowledgments
 
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/) - The code editor that powers VS Code
-- [Ladle](https://ladle.dev/) - Fast and lightweight tool for developing and testing React components
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [Ladle](https://ladle.dev/) - Development and testing environment
+- [Biome](https://biomejs.dev/) - Toolchain for web projects
+- [TypeScript](https://www.typescriptlang.org/) - Type safety and developer experience
+- [Vite](https://vitejs.dev/) - Next generation frontend tooling

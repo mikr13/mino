@@ -62,15 +62,16 @@ export type IconComponent = React.ComponentType<{
  * Configuration for editor icons
  */
 export type EditorIcons = {
+  language?: IconComponent;
   format?: IconComponent;
   reset?: IconComponent;
   fullScreen?: IconComponent;
   exitFullScreen?: IconComponent;
+  autoCorrect?: IconComponent;
   run?: IconComponent;
   submit?: IconComponent;
-  autoCorrect?: IconComponent;
-  language?: IconComponent;
   chevronDown?: IconComponent;
+  theme?: IconComponent;
 };
 
 /**
@@ -136,6 +137,7 @@ export type CodeEditorProps = {
   showResetButton?: boolean;
   showFullScreenButton?: boolean;
   showAutoCorrectToggle?: boolean;
+  showThemeSwitcher?: boolean;
 
   // Status bar
   showStatusBar?: boolean;
@@ -150,6 +152,7 @@ export type CodeEditorProps = {
   onLanguageChange?: (language: SupportedLanguage) => void;
   autoCorrect?: boolean;
   onAutoCorrectToggle?: (enabled: boolean) => void;
+  onThemeChange?: (theme: EditorTheme) => void;
 
   // Icon configuration
   icons?: EditorIcons;

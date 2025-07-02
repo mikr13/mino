@@ -172,6 +172,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   showResetButton = true,
   showFullScreenButton = true,
   showAutoCorrectToggle = true,
+  showThemeSwitcher = true,
   showStatusBar = false,
   showActionButtons = false,
 
@@ -183,6 +184,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   onFullScreenToggle,
   onReset,
   onFormat,
+  onThemeChange,
 
   // State
   defaultCode,
@@ -331,6 +333,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         <CodeEditorToolbar
           autoCorrect={autoCorrect}
           currentLanguage={state.currentLanguage}
+          currentTheme={theme}
           icons={icons}
           isFormatting={state.isFormatting}
           isFullScreen={isFullScreen}
@@ -345,12 +348,14 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             showLanguageSwitcher ? handlers.handleLanguageChange : undefined
           }
           onReset={showResetButton ? handlers.handleReset : undefined}
+          onThemeChange={showThemeSwitcher ? onThemeChange : undefined}
           showAutoCorrectToggle={showAutoCorrectToggle}
           showFormatButton={showFormatButton}
           showFullScreenButton={showFullScreenButton}
           showLanguageSwitcher={showLanguageSwitcher}
           showResetButton={showResetButton}
           showResetConfirmation={showResetConfirmation}
+          showThemeSwitcher={showThemeSwitcher}
         />
       )}
 

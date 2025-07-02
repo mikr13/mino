@@ -1,29 +1,31 @@
 import type { EditorIcons } from '@/types';
 import {
-  ChevronDown,
-  Code,
-  Languages,
-  Maximize,
-  Minimize,
-  Play,
-  RotateCcw,
-  Send,
-  Zap,
+  ChevronDownIcon,
+  CodeIcon,
+  LanguagesIcon,
+  MaximizeIcon,
+  MinimizeIcon,
+  MoonIcon,
+  PlayIcon,
+  RotateCcwIcon,
+  SendIcon,
+  ZapIcon,
 } from 'lucide-react';
 
 /**
  * Default icon set for the enhanced code editor
  */
 export const defaultIcons: Required<EditorIcons> = {
-  format: Code,
-  reset: RotateCcw,
-  fullScreen: Maximize,
-  exitFullScreen: Minimize,
-  run: Play,
-  submit: Send,
-  autoCorrect: Zap,
-  language: Languages,
-  chevronDown: ChevronDown,
+  format: CodeIcon,
+  reset: RotateCcwIcon,
+  fullScreen: MaximizeIcon,
+  exitFullScreen: MinimizeIcon,
+  run: PlayIcon,
+  submit: SendIcon,
+  autoCorrect: ZapIcon,
+  language: LanguagesIcon,
+  chevronDown: ChevronDownIcon,
+  theme: MoonIcon,
 };
 
 /**
