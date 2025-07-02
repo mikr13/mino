@@ -288,7 +288,7 @@ export const CustomIcons: Story = () => {
 export const ThemeSwitcher: Story = () => {
   const [code, setCode] = useState(DEFAULT_CODE_TEMPLATES.typescript);
   const [language, setLanguage] = useState<SupportedLanguage>('typescript');
-  const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('auto');
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
 
   return (
     <div style={{ height: '500px', width: '100%' }}>

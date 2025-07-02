@@ -153,7 +153,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   value,
   onChange,
   readonlyRanges = [],
-  theme = 'auto',
+  theme = 'system',
   height = '100%',
   width = '100%',
   className = '',

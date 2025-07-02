@@ -15,7 +15,7 @@ export type SupportedLanguage =
 /**
  * Theme options for the editor
  */
-export type EditorTheme = 'light' | 'dark' | 'auto';
+export type EditorTheme = 'light' | 'dark' | 'system';
 
 /**
  * Readonly range definition for protected code blocks
