@@ -41,6 +41,12 @@ jobs:
         run: |
           bun run type-check
           bun run lint
+      
+      - name: Setup Node.js for NPM
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Bump version (manual trigger)
         if: github.event_name == 'workflow_dispatch'
